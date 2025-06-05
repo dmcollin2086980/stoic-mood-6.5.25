@@ -54,6 +54,36 @@ struct DashboardView: View {
                 }
             }
         }
+        .onAppear {
+            debugPrintDashboardData()
+        }
+    }
+    
+    private func debugPrintDashboardData() {
+        #if DEBUG
+        print("=== Dashboard Data Debug ===")
+        print("Total Mood Entries: \(viewModel.entries.count)")
+        print("Mood Flow Data Points: \(viewModel.moodFlowData.count)")
+        
+        if let firstEntry = viewModel.entries.first, let lastEntry = viewModel.entries.last {
+            print("Date Range: \(firstEntry.date.formatted()) to \(lastEntry.date.formatted())")
+        }
+        
+        // Print current week's entries
+        let calendar = Calendar.current
+        let today = Date()
+        let weekStart = calendar.date(byAdding: .day, value: -6, to: today)!
+        let weekEntries = viewModel.entries.filter { entry in
+            entry.date >= weekStart && entry.date <= today
+        }
+        print("Current Week Entries: \(weekEntries.count)")
+        
+        // Print streak information
+        print("Current Streak: \(viewModel.currentStreak)")
+        print("Reflection Streak: \(reflectionVM.currentStreak)")
+        print("Total Reflections: \(reflectionVM.reflectionCount)")
+        print("=========================")
+        #endif
     }
 }
 
@@ -129,21 +159,29 @@ struct DashboardMoodFlowChartView: View {
                 .font(.caption)
                 .foregroundColor(themeManager.secondaryTextColor)
             
-            Chart(data) { point in
-                LineMark(
-                    x: .value("Date", point.date),
-                    y: .value("Mood", point.value)
-                )
-                .foregroundStyle(themeManager.accentColor)
-                
-                PointMark(
-                    x: .value("Date", point.date),
-                    y: .value("Mood", point.value)
-                )
-                .foregroundStyle(themeManager.accentColor)
+            if data.isEmpty {
+                Text("No mood data available")
+                    .font(.caption)
+                    .foregroundColor(themeManager.secondaryTextColor)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .padding()
+            } else {
+                Chart(data) { point in
+                    LineMark(
+                        x: .value("Date", point.date),
+                        y: .value("Mood", point.value)
+                    )
+                    .foregroundStyle(themeManager.accentColor)
+                    
+                    PointMark(
+                        x: .value("Date", point.date),
+                        y: .value("Mood", point.value)
+                    )
+                    .foregroundStyle(themeManager.accentColor)
+                }
+                .frame(height: 200)
+                .chartYScale(domain: 0...10)
             }
-            .frame(height: 200)
-            .chartYScale(domain: 0...10)
         }
         .padding()
         .background(themeManager.cardBackgroundColor)
@@ -158,6 +196,28 @@ struct WeekOverviewView: View {
     let entries: [JournalEntry]
     let themeManager: ThemeManager
     
+    private func getAverageMood(for date: Date) -> String {
+        let dayEntries = entries.filter {
+            Calendar.current.isDate($0.date, inSameDayAs: date)
+        }
+        
+        if dayEntries.isEmpty {
+            return "😶" // Fallback emoji for no entries
+        }
+        
+        // Calculate average intensity
+        let totalIntensity = dayEntries.reduce(0) { $0 + $1.intensity }
+        let averageIntensity = Double(totalIntensity) / Double(dayEntries.count)
+        
+        // Map intensity to emoji
+        switch averageIntensity {
+        case 0...3: return "😔"
+        case 3...5: return "😐"
+        case 5...7: return "🙂"
+        default: return "😊"
+        }
+    }
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text("This Week's Journey")
@@ -167,27 +227,19 @@ struct WeekOverviewView: View {
             HStack(spacing: 10) {
                 ForEach(0..<7) { day in
                     let date = Calendar.current.date(byAdding: .day, value: -6 + day, to: Date())!
-                    let dayEntries = entries.filter {
-                        Calendar.current.isDate($0.date, inSameDayAs: date)
-                    }
+                    let moodEmoji = getAverageMood(for: date)
                     
                     VStack(spacing: 8) {
                         Text(date.formatted(.dateTime.weekday(.abbreviated)))
                             .font(.caption2)
                             .foregroundColor(themeManager.secondaryTextColor)
                         
-                        if let firstEntry = dayEntries.first {
-                            Text(firstEntry.mood.emoji)
-                                .font(.title2)
-                        } else {
-                            Circle()
-                                .fill(themeManager.cardBackgroundColor)
-                                .frame(width: 40, height: 40)
-                        }
+                        Text(moodEmoji)
+                            .font(.title2)
                     }
                     .frame(maxWidth: .infinity)
                     .accessibilityElement(children: .combine)
-                    .accessibilityLabel("\(date.formatted(.dateTime.weekday(.wide))): \(dayEntries.first?.mood.emoji ?? "No entry")")
+                    .accessibilityLabel("\(date.formatted(.dateTime.weekday(.wide))): \(moodEmoji)")
                 }
             }
         }

@@ -27,17 +27,6 @@ struct QuoteListView: View {
         }
         .listStyle(PlainListStyle())
         .background(themeManager.backgroundColor)
-        .navigationTitle("Stoic Quotes")
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button(action: {
-                    viewModel.refreshQuotes()
-                }) {
-                    Image(systemName: "arrow.clockwise")
-                        .foregroundColor(themeManager.accentColor)
-                }
-            }
-        }
         .sheet(item: $selectedQuote) { quote in
             NavigationStack {
                 QuoteDetailView(quote: quote, viewModel: viewModel)

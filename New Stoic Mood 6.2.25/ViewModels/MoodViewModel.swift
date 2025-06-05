@@ -18,10 +18,17 @@ class MoodViewModel: ObservableObject {
     }
     
     func loadData() {
+        print("Loading mood data...")
         entries = journalManager.entries
+        print("Loaded \(entries.count) entries")
+        
         analyzeData()
         calculateCurrentStreak()
         calculateMoodFlowData()
+        
+        print("Mood data analysis complete")
+        print("Current streak: \(currentStreak)")
+        print("Mood flow data points: \(moodFlowData.count)")
     }
     
     private func analyzeData() {
@@ -177,6 +184,7 @@ class MoodViewModel: ObservableObject {
         }
         
         currentStreak = streak
+        print("Calculated current streak: \(streak) days")
     }
     
     private func calculateMoodFlowData() {
@@ -190,19 +198,23 @@ class MoodViewModel: ObservableObject {
         
         var dataPoints: [MoodFlowData] = []
         
-        // Create a data point for each day
-        for dayOffset in 0...6 {
-            let date = calendar.date(byAdding: .day, value: dayOffset - 6, to: today)!
+        // Get all entries from the last 30 days
+        let thirtyDaysAgo = calendar.date(byAdding: .day, value: -30, to: today)!
+        let recentEntries = entries.filter { $0.date >= thirtyDaysAgo && $0.date <= today }
+        
+        // Group entries by day
+        let groupedEntries = Dictionary(grouping: recentEntries) { entry in
+            calendar.startOfDay(for: entry.date)
+        }
+        
+        // Create data points for each day
+        for dayOffset in 0...30 {
+            let date = calendar.date(byAdding: .day, value: -dayOffset, to: today)!
             
-            // Get entries for this day
-            let dayEntries = entries.filter { entry in
-                calendar.isDate(entry.date, inSameDayAs: date)
-            }
-            
-            if !dayEntries.isEmpty {
+            if let dayEntries = groupedEntries[date] {
                 // Calculate average mood value for the day
                 let totalMoodValue = dayEntries.reduce(0) { sum, entry in
-                    sum + entry.mood.toMoodType.value
+                    sum + entry.intensity
                 }
                 let averageMoodValue = Double(totalMoodValue) / Double(dayEntries.count)
                 
@@ -210,16 +222,12 @@ class MoodViewModel: ObservableObject {
                     date: date,
                     value: averageMoodValue
                 ))
-            } else {
-                // Add a data point with 0 value for days without entries
-                dataPoints.append(MoodFlowData(
-                    date: date,
-                    value: 0
-                ))
             }
         }
         
-        moodFlowData = dataPoints
+        // Sort data points by date
+        moodFlowData = dataPoints.sorted { $0.date < $1.date }
+        print("Generated \(moodFlowData.count) mood flow data points")
     }
     
     // MARK: - Helper Methods
@@ -281,5 +289,36 @@ class MoodViewModel: ObservableObject {
         } else {
             return "Great job maintaining a consistent and thoughtful journaling practice"
         }
+    }
+    
+    // MARK: - Public Methods
+    
+    func addEntry(date: Date, mood: String, intensity: Int, journal: String) {
+        // Convert string mood to Mood type
+        let moodType = MoodType(rawValue: mood) ?? .happy
+        let moodValue = moodType.toMood
+        
+        // Convert intensity from 1-10 to 0.0-1.0
+        let normalizedIntensity = Double(intensity) / 10.0
+        
+        // Create and save the entry
+        let entry = JournalEntry(
+            id: UUID(),
+            date: date,
+            mood: moodValue,
+            intensity: normalizedIntensity,
+            content: journal
+        )
+        
+        journalManager.addEntry(mood: moodValue, intensity: normalizedIntensity, content: journal)
+        loadData() // Reload all data to update charts and analysis
+    }
+    
+    func clearAll() {
+        entries.removeAll()
+        if let encoded = try? JSONEncoder().encode(entries) {
+            UserDefaults.standard.set(encoded, forKey: "journalEntries")
+        }
+        loadData() // Reload all data to update charts and analysis
     }
 } 

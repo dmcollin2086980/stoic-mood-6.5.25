@@ -9,10 +9,32 @@ import SwiftUI
 
 @main
 struct New_Stoic_Mood_6_2_25App: App {
-    @StateObject private var viewModel = MoodViewModel()
-    @StateObject private var themeManager = ThemeManager()
+    @StateObject private var moodVM = MoodViewModel()
     @StateObject private var reflectionVM = ReflectionViewModel()
+    @StateObject private var exerciseVM = ExerciseViewModel()
     @StateObject private var quoteVM = QuoteViewModel()
+    @StateObject private var themeManager = ThemeManager()
+    
+    init() {
+        // Initialize any required setup here
+    }
+    
+    private func populateExampleDataIfNeeded() {
+        #if DEBUG
+        if !UserDefaults.standard.bool(forKey: "ExampleDataPopulated") {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                ExampleDataManager.shared.populateAllExampleData(
+                    moodVM: moodVM,
+                    reflectionVM: reflectionVM,
+                    exerciseVM: exerciseVM,
+                    quoteVM: quoteVM
+                ) {
+                    print("Initial example data population completed")
+                }
+            }
+        }
+        #endif
+    }
     
     var body: some Scene {
         WindowGroup {
@@ -53,10 +75,14 @@ struct New_Stoic_Mood_6_2_25App: App {
                 }
             }
             .tint(themeManager.accentColor)
-            .environmentObject(viewModel)
+            .environmentObject(moodVM)
             .environmentObject(themeManager)
             .environmentObject(reflectionVM)
+            .environmentObject(exerciseVM)
             .environmentObject(quoteVM)
+            .onAppear {
+                populateExampleDataIfNeeded()
+            }
         }
     }
 }

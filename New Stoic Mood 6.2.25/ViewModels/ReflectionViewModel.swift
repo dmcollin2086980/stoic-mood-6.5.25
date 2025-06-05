@@ -62,7 +62,7 @@ class ReflectionViewModel: ObservableObject {
         saveReflections()
     }
     
-    private func saveReflections() {
+    public func saveReflections() {
         if let encoded = try? JSONEncoder().encode(reflections) {
             userDefaults.set(encoded, forKey: reflectionsKey)
         }
@@ -73,5 +73,17 @@ class ReflectionViewModel: ObservableObject {
            let decoded = try? JSONDecoder().decode([Reflection].self, from: data) {
             reflections = decoded.sorted { $0.date > $1.date }
         }
+    }
+    
+    // MARK: - ExampleDataManager Support
+    public func addReflection(date: Date, prompt: String, response: String) {
+        let reflection = Reflection(date: date, content: response, exercisePrompt: prompt)
+        reflections.insert(reflection, at: 0)
+        saveReflections()
+    }
+    
+    public func clearAll() {
+        reflections.removeAll()
+        saveReflections()
     }
 } 

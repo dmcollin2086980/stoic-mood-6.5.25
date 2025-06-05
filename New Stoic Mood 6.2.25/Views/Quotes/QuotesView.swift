@@ -52,7 +52,6 @@ struct QuotesView: View {
                 }
                 .scrollContentBackground(.hidden)
             }
-            .navigationTitle("Quotes")
             .sheet(item: $selectedQuote) { quote in
                 NavigationView {
                     QuoteDetailView(quote: quote, viewModel: viewModel)

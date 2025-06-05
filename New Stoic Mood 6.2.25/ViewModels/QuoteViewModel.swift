@@ -90,16 +90,16 @@ class QuoteViewModel: ObservableObject {
     func saveQuote(_ quote: StoicQuote) {
         if !savedQuotes.contains(where: { $0.id == quote.id }) {
             savedQuotes.append(quote)
-            saveQuotesToStorage()
+            saveQuotes()
         }
     }
     
     func removeSavedQuote(_ quote: StoicQuote) {
         savedQuotes.removeAll { $0.id == quote.id }
-        saveQuotesToStorage()
+        saveQuotes()
     }
     
-    private func saveQuotesToStorage() {
+    public func saveQuotes() {
         if let encoded = try? JSONEncoder().encode(savedQuotes) {
             userDefaults.set(encoded, forKey: savedQuotesKey)
         }
@@ -118,5 +118,10 @@ class QuoteViewModel: ObservableObject {
         NSPasteboard.general.clearContents()
         NSPasteboard.general.setString(text, forType: .string)
         #endif
+    }
+    
+    public func clearAll() {
+        savedQuotes.removeAll()
+        saveQuotes()
     }
 } 

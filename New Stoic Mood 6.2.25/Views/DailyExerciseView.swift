@@ -68,20 +68,6 @@ struct DailyExerciseView: View {
                         // Reflection Section
                         if viewModel.isExerciseComplete {
                             ExerciseReflectionView(viewModel: viewModel, showingSaveAlert: $showingSaveAlert)
-                            
-                            NavigationLink(destination: ReflectionHistoryView()) {
-                                HStack {
-                                    Text("View Reflection History")
-                                        .foregroundColor(themeManager.accentColor)
-                                    Spacer()
-                                    Image(systemName: "chevron.right")
-                                        .foregroundColor(themeManager.secondaryTextColor)
-                                }
-                                .padding()
-                                .background(themeManager.cardBackgroundColor)
-                                .cornerRadius(ThemeManager.cornerRadius)
-                            }
-                            .accessibilityLabel("View Reflection History")
                         }
                         
                         // Complete Button
@@ -106,6 +92,17 @@ struct DailyExerciseView: View {
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    NavigationLink(destination: ExerciseHistoryView()) {
+                        HStack {
+                            Image(systemName: "clock.arrow.circlepath")
+                            Text("History")
+                        }
+                        .foregroundColor(themeManager.accentColor)
+                    }
+                }
+            }
             .alert("Reflection Saved", isPresented: $showingSaveAlert) {
                 Button("OK", role: .cancel) { }
             } message: {

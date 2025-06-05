@@ -2,10 +2,45 @@ import SwiftUI
 
 struct SettingsView: View {
     @EnvironmentObject private var themeManager: ThemeManager
+    @EnvironmentObject private var moodVM: MoodViewModel
+    @EnvironmentObject private var reflectionVM: ReflectionViewModel
+    @EnvironmentObject private var exerciseVM: ExerciseViewModel
+    @EnvironmentObject private var quoteVM: QuoteViewModel
     @StateObject private var notificationManager = NotificationManager.shared
     @AppStorage("notificationsEnabled") private var notificationsEnabled = true
     @AppStorage("reminderTime") private var reminderTime = Date()
     @State private var showingPermissionAlert = false
+    
+    #if DEBUG
+    private var debugSection: some View {
+        Section(header: Text("Debug Options")) {
+            Button(action: {
+                ExampleDataManager.shared.populateAllExampleData(
+                    moodVM: moodVM,
+                    reflectionVM: reflectionVM,
+                    exerciseVM: exerciseVM,
+                    quoteVM: quoteVM
+                ) {
+                    print("Example data population completed")
+                }
+            }) {
+                HStack {
+                    Text("Populate Example Data")
+                    if ExampleDataManager.shared.isPopulating {
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle())
+                    }
+                }
+            }
+            .disabled(ExampleDataManager.shared.isPopulating)
+            
+            if let error = ExampleDataManager.shared.lastError {
+                Text(error)
+                    .foregroundColor(.red)
+            }
+        }
+    }
+    #endif
     
     var body: some View {
         ZStack {
@@ -63,6 +98,10 @@ struct SettingsView: View {
                 } header: {
                     Text("About")
                 }
+                
+                #if DEBUG
+                debugSection
+                #endif
             }
             .scrollContentBackground(.hidden)
         }
@@ -83,5 +122,9 @@ struct SettingsView: View {
     NavigationStack {
         SettingsView()
             .environmentObject(ThemeManager())
+            .environmentObject(MoodViewModel())
+            .environmentObject(ReflectionViewModel())
+            .environmentObject(ExerciseViewModel())
+            .environmentObject(QuoteViewModel())
     }
 } 

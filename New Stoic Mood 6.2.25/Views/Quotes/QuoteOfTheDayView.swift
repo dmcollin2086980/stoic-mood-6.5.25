@@ -16,20 +16,6 @@ struct QuoteOfTheDayView: View {
             // Action Buttons
             HStack(spacing: 20) {
                 ActionButton(
-                    icon: "arrow.clockwise",
-                    label: "New Quote",
-                    action: {
-                        withAnimation {
-                            viewModel.refreshDailyQuote()
-                            isAnimating = true
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                isAnimating = false
-                            }
-                        }
-                    }
-                )
-                
-                ActionButton(
                     icon: "bookmark",
                     label: "Save",
                     action: { viewModel.saveQuote(viewModel.dailyQuote) }
