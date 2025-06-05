@@ -1,7 +1,7 @@
 import Foundation
 import SwiftUI
 
-struct Quote: Identifiable, Codable {
+struct StoicQuote: Identifiable, Codable {
     var id: UUID
     let text: String
     let author: String
@@ -14,9 +14,9 @@ struct Quote: Identifiable, Codable {
 }
 
 class QuoteViewModel: ObservableObject {
-    @Published var quotes: [Quote] = []
-    @Published var dailyQuote: Quote
-    @Published var savedQuotes: [Quote] = []
+    @Published var quotes: [StoicQuote] = []
+    @Published var dailyQuote: StoicQuote
+    @Published var savedQuotes: [StoicQuote] = []
     @Published var isShareSheetPresented = false
     @Published var shareText: String = ""
     
@@ -26,27 +26,27 @@ class QuoteViewModel: ObservableObject {
     
     init() {
         // Initialize with a default quote
-        let defaultQuote = Quote(text: "The happiness of your life depends upon the quality of your thoughts.", author: "Marcus Aurelius")
+        let defaultQuote = StoicQuote(text: "The happiness of your life depends upon the quality of your thoughts.", author: "Marcus Aurelius")
         self.dailyQuote = defaultQuote
         
         // Load saved quotes
         if let savedData = userDefaults.data(forKey: savedQuotesKey),
-           let decodedQuotes = try? JSONDecoder().decode([Quote].self, from: savedData) {
+           let decodedQuotes = try? JSONDecoder().decode([StoicQuote].self, from: savedData) {
             self.savedQuotes = decodedQuotes
         }
         
         // Load quotes
         self.quotes = [
-            Quote(text: "The happiness of your life depends upon the quality of your thoughts.", author: "Marcus Aurelius"),
-            Quote(text: "Waste no more time arguing what a good man should be. Be one.", author: "Marcus Aurelius"),
-            Quote(text: "You have power over your mind - not outside events. Realize this, and you will find strength.", author: "Marcus Aurelius"),
-            Quote(text: "The best revenge is to be unlike him who performed the injury.", author: "Marcus Aurelius"),
-            Quote(text: "If it is not right, do not do it, if it is not true, do not say it.", author: "Marcus Aurelius"),
-            Quote(text: "He who fears death will never do anything worthy of a living man.", author: "Seneca"),
-            Quote(text: "We suffer more often in imagination than in reality.", author: "Seneca"),
-            Quote(text: "It is not that we have a short time to live, but that we waste a lot of it.", author: "Seneca"),
-            Quote(text: "Luck is what happens when preparation meets opportunity.", author: "Seneca"),
-            Quote(text: "The whole future lies in uncertainty: live immediately.", author: "Seneca")
+            StoicQuote(text: "The happiness of your life depends upon the quality of your thoughts.", author: "Marcus Aurelius"),
+            StoicQuote(text: "Waste no more time arguing what a good man should be. Be one.", author: "Marcus Aurelius"),
+            StoicQuote(text: "You have power over your mind - not outside events. Realize this, and you will find strength.", author: "Marcus Aurelius"),
+            StoicQuote(text: "The best revenge is to be unlike him who performed the injury.", author: "Marcus Aurelius"),
+            StoicQuote(text: "If it is not right, do not do it, if it is not true, do not say it.", author: "Marcus Aurelius"),
+            StoicQuote(text: "He who fears death will never do anything worthy of a living man.", author: "Seneca"),
+            StoicQuote(text: "We suffer more often in imagination than in reality.", author: "Seneca"),
+            StoicQuote(text: "It is not that we have a short time to live, but that we waste a lot of it.", author: "Seneca"),
+            StoicQuote(text: "Luck is what happens when preparation meets opportunity.", author: "Seneca"),
+            StoicQuote(text: "The whole future lies in uncertainty: live immediately.", author: "Seneca")
         ]
         
         // Set up daily quote
@@ -69,16 +69,16 @@ class QuoteViewModel: ObservableObject {
     
     private func loadQuotes() {
         quotes = [
-            Quote(text: "The happiness of your life depends upon the quality of your thoughts.", author: "Marcus Aurelius"),
-            Quote(text: "Waste no more time arguing what a good man should be. Be one.", author: "Marcus Aurelius"),
-            Quote(text: "You have power over your mind - not outside events. Realize this, and you will find strength.", author: "Marcus Aurelius"),
-            Quote(text: "The best revenge is to be unlike him who performed the injury.", author: "Marcus Aurelius"),
-            Quote(text: "If it is not right, do not do it, if it is not true, do not say it.", author: "Marcus Aurelius"),
-            Quote(text: "He who fears death will never do anything worthy of a living man.", author: "Seneca"),
-            Quote(text: "We suffer more often in imagination than in reality.", author: "Seneca"),
-            Quote(text: "It is not that we have a short time to live, but that we waste a lot of it.", author: "Seneca"),
-            Quote(text: "Luck is what happens when preparation meets opportunity.", author: "Seneca"),
-            Quote(text: "The whole future lies in uncertainty: live immediately.", author: "Seneca")
+            StoicQuote(text: "The happiness of your life depends upon the quality of your thoughts.", author: "Marcus Aurelius"),
+            StoicQuote(text: "Waste no more time arguing what a good man should be. Be one.", author: "Marcus Aurelius"),
+            StoicQuote(text: "You have power over your mind - not outside events. Realize this, and you will find strength.", author: "Marcus Aurelius"),
+            StoicQuote(text: "The best revenge is to be unlike him who performed the injury.", author: "Marcus Aurelius"),
+            StoicQuote(text: "If it is not right, do not do it, if it is not true, do not say it.", author: "Marcus Aurelius"),
+            StoicQuote(text: "He who fears death will never do anything worthy of a living man.", author: "Seneca"),
+            StoicQuote(text: "We suffer more often in imagination than in reality.", author: "Seneca"),
+            StoicQuote(text: "It is not that we have a short time to live, but that we waste a lot of it.", author: "Seneca"),
+            StoicQuote(text: "Luck is what happens when preparation meets opportunity.", author: "Seneca"),
+            StoicQuote(text: "The whole future lies in uncertainty: live immediately.", author: "Seneca")
         ]
     }
     
@@ -87,14 +87,14 @@ class QuoteViewModel: ObservableObject {
         userDefaults.set(ISO8601DateFormatter().string(from: Date()), forKey: dailyQuoteKey)
     }
     
-    func saveQuote(_ quote: Quote) {
+    func saveQuote(_ quote: StoicQuote) {
         if !savedQuotes.contains(where: { $0.id == quote.id }) {
             savedQuotes.append(quote)
             saveQuotesToStorage()
         }
     }
     
-    func removeSavedQuote(_ quote: Quote) {
+    func removeSavedQuote(_ quote: StoicQuote) {
         savedQuotes.removeAll { $0.id == quote.id }
         saveQuotesToStorage()
     }
@@ -105,13 +105,13 @@ class QuoteViewModel: ObservableObject {
         }
     }
     
-    func shareQuote(_ quote: Quote) {
-        shareText = "\"\(quote.text)\" — \(quote.author)"
+    func shareQuote(_ quote: StoicQuote) {
+        shareText = "\"\(quote.text)\""
         isShareSheetPresented = true
     }
     
-    func copyQuote(_ quote: Quote) {
-        let text = "\"\(quote.text)\" — \(quote.author)"
+    func copyQuote(_ quote: StoicQuote) {
+        let text = "\"\(quote.text)\""
         #if os(iOS)
         UIPasteboard.general.string = text
         #elseif os(macOS)

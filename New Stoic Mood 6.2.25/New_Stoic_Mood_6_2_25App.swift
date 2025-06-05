@@ -11,13 +11,14 @@ import SwiftUI
 struct New_Stoic_Mood_6_2_25App: App {
     @StateObject private var viewModel = MoodViewModel()
     @StateObject private var themeManager = ThemeManager()
+    @StateObject private var reflectionVM = ReflectionViewModel()
     
     var body: some Scene {
         WindowGroup {
             MainView()
                 .environmentObject(viewModel)
                 .environmentObject(themeManager)
-                .preferredColorScheme(themeManager.isDarkMode ? .dark : .light)
+                .environmentObject(reflectionVM)
         }
     }
 }

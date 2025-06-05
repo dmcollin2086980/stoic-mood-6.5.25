@@ -3,32 +3,16 @@ import Charts
 
 struct DashboardView: View {
     @EnvironmentObject var viewModel: MoodViewModel
+    @EnvironmentObject var reflectionVM: ReflectionViewModel
     @EnvironmentObject private var themeManager: ThemeManager
     
     var body: some View {
         ScrollView {
-            VStack(spacing: 20) {
-                // Stats Row
-                HStack(spacing: 15) {
-                    StatCard(
-                        title: "Current Streak",
-                        value: "\(viewModel.currentStreak)",
-                        subtitle: "days of reflection",
-                        themeManager: themeManager
-                    )
-                    
-                    StatCard(
-                        title: "Total Entries",
-                        value: "\(viewModel.entries.count)",
-                        subtitle: "moments captured",
-                        themeManager: themeManager
-                    )
-                }
-                .padding(.horizontal)
-                
-                // Daily Quote
+            VStack(spacing: 16) {
+                // Daily Quote at the top
                 QuoteView(themeManager: themeManager)
-                    .padding(.horizontal)
+                    .frame(maxWidth: .infinity)
+                    .padding(.horizontal, 16)
                 
                 // Mood Flow Chart
                 DashboardMoodFlowChartView(data: viewModel.moodFlowData)
@@ -37,8 +21,42 @@ struct DashboardView: View {
                 // Week Overview
                 WeekOverviewView(entries: viewModel.entries, themeManager: themeManager)
                     .padding(.horizontal)
+                
+                // Streak Summary Section
+                HStack(spacing: 8) {
+                    StatCard(
+                        title: "Current Streak",
+                        value: "\(viewModel.currentStreak)",
+                        subtitle: "days",
+                        themeManager: themeManager
+                    )
+                    
+                    StatCard(
+                        title: "Total Entries",
+                        value: "\(viewModel.entries.count)",
+                        subtitle: "entries",
+                        themeManager: themeManager
+                    )
+                    
+                    StatCard(
+                        title: "Reflection Streak",
+                        value: "\(reflectionVM.currentStreak)",
+                        subtitle: "days",
+                        themeManager: themeManager
+                    )
+                    
+                    StatCard(
+                        title: "Reflections",
+                        value: "\(reflectionVM.reflectionCount)",
+                        subtitle: "total",
+                        themeManager: themeManager
+                    )
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.horizontal, 8)
             }
-            .padding(.vertical)
+            .padding(.top, 16)
+            .padding(.bottom, 32)
         }
         .navigationTitle("Dashboard")
     }
@@ -51,23 +69,29 @@ struct StatCard: View {
     let themeManager: ThemeManager
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .center, spacing: 4) {
             Text(title)
                 .font(.caption)
                 .foregroundColor(themeManager.secondaryTextColor)
+                .minimumScaleFactor(0.8)
+                .multilineTextAlignment(.center)
             
             Text(value)
-                .font(.title)
+                .font(.title2)
                 .fontWeight(.bold)
                 .foregroundColor(themeManager.textColor)
+                .minimumScaleFactor(0.8)
             
             Text(subtitle)
                 .font(.caption2)
                 .foregroundColor(themeManager.secondaryTextColor)
+                .minimumScaleFactor(0.8)
         }
-        .padding()
+        .frame(width: UIScreen.main.bounds.width * 0.22, height: 90)
+        .padding(.vertical, 8)
         .background(themeManager.cardBackgroundColor)
-        .cornerRadius(12)
+        .cornerRadius(ThemeManager.cornerRadius)
+        .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
     }
 }
 
@@ -81,14 +105,17 @@ struct QuoteView: View {
                 .foregroundColor(themeManager.textColor)
             
             Text(StoicQuotesManager.shared.getRandomQuote())
-                .font(.system(size: 18, weight: .medium, design: .serif))
+                .font(.title3)
+                .minimumScaleFactor(0.7)
                 .multilineTextAlignment(.center)
                 .foregroundColor(themeManager.textColor)
-                .padding()
+                .lineLimit(3)
+                .padding(.horizontal)
         }
         .padding()
         .background(themeManager.cardBackgroundColor)
-        .cornerRadius(12)
+        .cornerRadius(ThemeManager.cornerRadius)
+        .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
     }
 }
 
@@ -120,7 +147,8 @@ struct DashboardMoodFlowChartView: View {
         }
         .padding()
         .background(themeManager.cardBackgroundColor)
-        .cornerRadius(12)
+        .cornerRadius(ThemeManager.cornerRadius)
+        .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
     }
 }
 
@@ -161,12 +189,14 @@ struct WeekOverviewView: View {
         }
         .padding()
         .background(themeManager.cardBackgroundColor)
-        .cornerRadius(12)
+        .cornerRadius(ThemeManager.cornerRadius)
+        .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
     }
 }
 
 #Preview {
     DashboardView()
         .environmentObject(MoodViewModel())
+        .environmentObject(ReflectionViewModel())
         .environmentObject(ThemeManager())
 } 

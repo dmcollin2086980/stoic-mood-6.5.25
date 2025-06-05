@@ -1,7 +1,8 @@
 import SwiftUI
 
 struct QuoteDetailView: View {
-    let quote: Quote
+    let quote: StoicQuote
+    @ObservedObject var viewModel: QuoteViewModel
     @EnvironmentObject private var themeManager: ThemeManager
     @Environment(\.dismiss) private var dismiss
     
@@ -17,19 +18,19 @@ struct QuoteDetailView: View {
                     ActionButton(
                         icon: "bookmark",
                         label: "Save",
-                        action: { /* TODO: Implement save functionality */ }
+                        action: { viewModel.saveQuote(quote) }
                     )
                     
                     ActionButton(
                         icon: "square.and.arrow.up",
                         label: "Share",
-                        action: { /* TODO: Implement share functionality */ }
+                        action: { viewModel.shareQuote(quote) }
                     )
                     
                     ActionButton(
                         icon: "text.quote",
                         label: "Copy",
-                        action: { /* TODO: Implement copy functionality */ }
+                        action: { viewModel.copyQuote(quote) }
                     )
                 }
                 .padding()
@@ -62,6 +63,9 @@ struct QuoteDetailView: View {
                 }
             }
         }
+        .sheet(isPresented: $viewModel.isShareSheetPresented) {
+            ShareSheet(activityItems: [viewModel.shareText])
+        }
     }
 }
 
@@ -88,13 +92,24 @@ private struct ActionButton: View {
     }
 }
 
+struct ShareSheet: UIViewControllerRepresentable {
+    let activityItems: [Any]
+    
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
+    }
+    
+    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
+}
+
 #Preview {
     NavigationView {
         QuoteDetailView(
-            quote: Quote(
+            quote: StoicQuote(
                 text: "The happiness of your life depends upon the quality of your thoughts.",
                 author: "Marcus Aurelius"
-            )
+            ),
+            viewModel: QuoteViewModel()
         )
         .environmentObject(ThemeManager())
     }

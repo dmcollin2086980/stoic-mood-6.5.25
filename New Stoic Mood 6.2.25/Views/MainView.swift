@@ -1,49 +1,52 @@
 import SwiftUI
 
+enum Tab {
+    case dashboard
+    case journal
+    case quotes
+    case exercise
+    case settings
+}
+
 struct MainView: View {
     @EnvironmentObject var viewModel: MoodViewModel
     @EnvironmentObject var themeManager: ThemeManager
-    @State private var selectedTab = 0
+    @State private var selectedTab: Tab = .dashboard
     
     var body: some View {
         TabView(selection: $selectedTab) {
             DashboardView()
                 .tabItem {
-                    Image(systemName: "waveform.path.ecg")
-                    Text("Dashboard")
+                    Label("Dashboard", systemImage: "chart.bar.fill")
                 }
-                .tag(0)
+                .tag(Tab.dashboard)
             
             JournalView()
                 .tabItem {
-                    Image(systemName: "book")
-                    Text("Journal")
+                    Label("Journal", systemImage: "book.fill")
                 }
-                .tag(1)
+                .tag(Tab.journal)
             
-            QuotesView()
+            QuotesView(viewModel: QuoteViewModel())
                 .tabItem {
-                    Image(systemName: "text.quote")
-                    Text("Quotes")
+                    Label("Quotes", systemImage: "quote.bubble.fill")
                 }
-                .tag(2)
+                .tag(Tab.quotes)
             
             DailyExerciseView()
                 .tabItem {
-                    Image(systemName: "figure.walk")
-                    Text("Exercises")
+                    Label("Exercise", systemImage: "figure.walk")
                 }
-                .tag(3)
+                .tag(Tab.exercise)
             
             SettingsView()
                 .tabItem {
-                    Image(systemName: "gearshape")
-                    Text("Settings")
+                    Label("Settings", systemImage: "gear")
                 }
-                .tag(4)
+                .tag(Tab.settings)
         }
         .tint(themeManager.accentColor)
-        .onChange(of: selectedTab) { _ in
+        .onChange(of: selectedTab) { oldValue, newValue in
             withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
                 // This creates a subtle bounce effect when switching tabs
             }

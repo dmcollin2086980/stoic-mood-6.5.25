@@ -1,69 +1,35 @@
 import SwiftUI
 
 struct SavedQuotesView: View {
-    @StateObject private var viewModel = QuoteViewModel()
+    @ObservedObject var viewModel: QuoteViewModel
     @EnvironmentObject private var themeManager: ThemeManager
+    @State private var selectedQuote: StoicQuote?
     
     var body: some View {
         List {
             if viewModel.savedQuotes.isEmpty {
-                ContentUnavailableView(
-                    "No Saved Quotes",
-                    systemImage: "bookmark.slash",
-                    description: Text("Quotes you save will appear here")
-                )
+                Text("No saved quotes yet")
+                    .foregroundColor(themeManager.secondaryTextColor)
+                    .italic()
             } else {
                 ForEach(viewModel.savedQuotes) { quote in
-                    SavedQuoteRow(quote: quote, viewModel: viewModel)
-                }
-            }
-        }
-        .listStyle(PlainListStyle())
-        .background(themeManager.backgroundColor)
-        .navigationTitle("Saved Quotes")
-    }
-}
-
-private struct SavedQuoteRow: View {
-    let quote: Quote
-    @ObservedObject var viewModel: QuoteViewModel
-    @EnvironmentObject private var themeManager: ThemeManager
-    @State private var showingDetail = false
-    
-    var body: some View {
-        Button(action: { showingDetail = true }) {
-            HStack {
-                VStack(alignment: .leading, spacing: 8) {
-                    Text(quote.text)
-                        .font(.body)
-                        .italic()
-                        .foregroundColor(themeManager.textColor)
-                        .lineLimit(2)
-                    
-                    Text("— \(quote.author)")
-                        .font(.subheadline)
-                        .foregroundColor(themeManager.secondaryTextColor)
-                }
-                
-                Spacer()
-                
-                Button(action: {
-                    withAnimation {
-                        viewModel.removeSavedQuote(quote)
+                    Button(action: { selectedQuote = quote }) {
+                        Text(quote.text)
+                            .foregroundColor(themeManager.textColor)
+                            .lineLimit(2)
                     }
-                }) {
-                    Image(systemName: "bookmark.fill")
-                        .foregroundColor(themeManager.accentColor)
+                }
+                .onDelete { indexSet in
+                    for index in indexSet {
+                        viewModel.removeSavedQuote(viewModel.savedQuotes[index])
+                    }
                 }
             }
-            .padding()
-            .background(themeManager.cardBackgroundColor)
-            .cornerRadius(12)
         }
-        .buttonStyle(PlainButtonStyle())
-        .sheet(isPresented: $showingDetail) {
+        .navigationTitle("Saved Quotes")
+        .sheet(item: $selectedQuote) { quote in
             NavigationView {
-                QuoteDetailView(quote: quote)
+                QuoteDetailView(quote: quote, viewModel: viewModel)
             }
         }
     }
@@ -71,7 +37,7 @@ private struct SavedQuoteRow: View {
 
 #Preview {
     NavigationView {
-        SavedQuotesView()
+        SavedQuotesView(viewModel: QuoteViewModel())
             .environmentObject(ThemeManager())
     }
 } 

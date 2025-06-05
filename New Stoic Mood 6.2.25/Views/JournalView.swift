@@ -59,6 +59,8 @@ struct JournalView: View {
     var body: some View {
         NavigationStack {
             ZStack {
+                themeManager.backgroundColor.ignoresSafeArea()
+                
                 VStack(spacing: ThemeManager.padding) {
                     // Search bar
                     SearchBar(text: $searchText)
@@ -140,6 +142,9 @@ struct JournalView: View {
             }
             .sheet(isPresented: $showingExportOptions) {
                 ExportOptionsView()
+            }
+            .onTapGesture {
+                UIApplication.shared.endEditing()
             }
         }
     }

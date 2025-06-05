@@ -1,9 +1,12 @@
 import SwiftUI
+import Combine
 
 struct DailyExerciseView: View {
     @StateObject private var viewModel = DailyExerciseViewModel()
+    @EnvironmentObject var reflectionVM: ReflectionViewModel
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var themeManager: ThemeManager
+    @State private var showingSaveAlert = false
     
     var body: some View {
         NavigationView {
@@ -20,11 +23,7 @@ struct DailyExerciseView: View {
                                 .multilineTextAlignment(.center)
                                 .padding()
                                 .background(themeManager.cardBackgroundColor)
-                                .cornerRadius(12)
-                            
-                            Text("— \(viewModel.currentExercise.author)")
-                                .font(.body)
-                                .foregroundColor(themeManager.secondaryTextColor)
+                                .cornerRadius(ThemeManager.cornerRadius)
                         }
                         
                         // Exercise Content
@@ -38,7 +37,7 @@ struct DailyExerciseView: View {
                                 .foregroundColor(themeManager.secondaryTextColor)
                                 .padding()
                                 .background(themeManager.cardBackgroundColor)
-                                .cornerRadius(12)
+                                .cornerRadius(ThemeManager.cornerRadius)
                         }
                         
                         // Action Steps
@@ -62,11 +61,24 @@ struct DailyExerciseView: View {
                         }
                         .padding()
                         .background(themeManager.cardBackgroundColor)
-                        .cornerRadius(12)
+                        .cornerRadius(ThemeManager.cornerRadius)
                         
                         // Reflection Section
                         if viewModel.isExerciseComplete {
-                            ExerciseReflectionView(viewModel: viewModel, themeManager: themeManager)
+                            ExerciseReflectionView(viewModel: viewModel, showingSaveAlert: $showingSaveAlert)
+                            
+                            NavigationLink(destination: ReflectionHistoryView()) {
+                                HStack {
+                                    Text("View Reflection History")
+                                        .foregroundColor(themeManager.accentColor)
+                                    Spacer()
+                                    Image(systemName: "chevron.right")
+                                        .foregroundColor(themeManager.secondaryTextColor)
+                                }
+                                .padding()
+                                .background(themeManager.cardBackgroundColor)
+                                .cornerRadius(ThemeManager.cornerRadius)
+                            }
                         }
                         
                         // Complete Button
@@ -78,11 +90,11 @@ struct DailyExerciseView: View {
                             } label: {
                                 Text("Complete Exercise")
                                     .font(.body)
-                                    .foregroundColor(themeManager.textColor)
+                                    .foregroundColor(.white)
                                     .frame(maxWidth: .infinity)
                                     .padding()
                                     .background(themeManager.accentColor)
-                                    .cornerRadius(12)
+                                    .cornerRadius(ThemeManager.cornerRadius)
                             }
                         }
                     }
@@ -94,10 +106,22 @@ struct DailyExerciseView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Done") {
+                        if !viewModel.reflectionText.isEmpty {
+                            reflectionVM.addReflection(content: viewModel.reflectionText)
+                            viewModel.reflectionText = ""
+                        }
                         dismiss()
                     }
-                    .foregroundColor(themeManager.secondaryTextColor)
+                    .foregroundColor(themeManager.accentColor)
                 }
+            }
+            .alert("Reflection Saved", isPresented: $showingSaveAlert) {
+                Button("OK", role: .cancel) { }
+            } message: {
+                Text("Your reflection has been saved successfully.")
+            }
+            .onTapGesture {
+                UIApplication.shared.endEditing()
             }
         }
     }
@@ -106,10 +130,10 @@ struct DailyExerciseView: View {
 class DailyExerciseViewModel: ObservableObject {
     @Published var currentExercise: StoicExercise
     @Published var isExerciseComplete = false
-    @Published var reflectionText = ""
+    @Published var reflectionText: String = ""
     
     init() {
-        // TODO: Load exercise from persistent storage or API
+        // Initialize currentExercise
         self.currentExercise = StoicExercise(
             id: UUID(),
             date: Date(),
@@ -128,12 +152,6 @@ class DailyExerciseViewModel: ObservableObject {
     
     func completeExercise() {
         isExerciseComplete = true
-        // TODO: Save completion status
-    }
-    
-    func saveReflection() {
-        // TODO: Save reflection to persistent storage
-        print("Saving reflection: \(reflectionText)")
     }
 }
 
@@ -148,7 +166,9 @@ struct StoicExercise: Identifiable {
 
 struct ExerciseReflectionView: View {
     @ObservedObject var viewModel: DailyExerciseViewModel
-    let themeManager: ThemeManager
+    @EnvironmentObject var reflectionVM: ReflectionViewModel
+    @EnvironmentObject private var themeManager: ThemeManager
+    @Binding var showingSaveAlert: Bool
     
     var body: some View {
         VStack(spacing: 16) {
@@ -162,11 +182,15 @@ struct ExerciseReflectionView: View {
                 .cornerRadius(12)
                 .foregroundColor(themeManager.textColor)
             Button("Save Reflection") {
-                viewModel.saveReflection()
+                if !viewModel.reflectionText.isEmpty {
+                    reflectionVM.addReflection(content: viewModel.reflectionText)
+                    viewModel.reflectionText = ""
+                    showingSaveAlert = true
+                }
             }
             .padding()
             .background(themeManager.accentColor)
-            .foregroundColor(themeManager.textColor)
+            .foregroundColor(.white)
             .cornerRadius(8)
         }
         .padding()
@@ -228,5 +252,6 @@ struct ReflectionPromptsView: View {
 
 #Preview {
     DailyExerciseView()
+        .environmentObject(ReflectionViewModel())
         .environmentObject(ThemeManager())
 } 
