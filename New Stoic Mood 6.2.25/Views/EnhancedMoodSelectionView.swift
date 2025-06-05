@@ -3,65 +3,76 @@ import SwiftUI
 /// A view that allows users to select their mood and intensity level.
 /// This view provides a grid of mood options and a slider for intensity selection.
 struct EnhancedMoodSelectionView: View {
-    // MARK: - Properties
-    
-    /// The environment object that provides theme-related functionality
-    @EnvironmentObject var themeManager: ThemeManager
-    
-    /// The callback function that is called when a mood and intensity are selected
-    let onSelect: (Mood, Double) -> Void
-    
-    /// The currently selected mood
-    @State private var selectedMood: Mood?
-    
-    /// The current intensity value
-    @State private var intensity: Double = 0.5
-    
-    /// A boolean indicating whether the view is presented
+    @Binding var selectedMood: Mood?
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var themeManager: ThemeManager
+    @State private var selectedIntensity: Int = 5
+    @State private var showingEmojiPicker = false
     
-    // MARK: - Body
+    private let intensities = Array(1...10)
     
     var body: some View {
-        NavigationStack {
-            VStack(spacing: ThemeManager.padding * 2) {
-                // Header
-                VStack(spacing: ThemeManager.smallPadding) {
-                    Text("How are you feeling?")
-                        .font(.title)
-                        .foregroundColor(themeManager.textColor)
-                    
-                    Text("Select your mood and intensity")
-                        .font(.subheadline)
-                        .foregroundColor(themeManager.secondaryTextColor)
-                }
-                
-                // Mood grid
+        NavigationView {
+            VStack(spacing: themeManager.spacing) {
+                // Mood Selection Grid
                 LazyVGrid(columns: [
-                    GridItem(.adaptive(minimum: 80, maximum: 100), spacing: ThemeManager.padding)
-                ], spacing: ThemeManager.padding) {
-                    ForEach(Mood.allCases) { mood in
-                        EnhancedMoodButton(
+                    GridItem(.flexible()),
+                    GridItem(.flexible()),
+                    GridItem(.flexible())
+                ], spacing: themeManager.spacing) {
+                    ForEach(Mood.allCases, id: \.self) { mood in
+                        MoodButton(
                             mood: mood,
                             isSelected: selectedMood == mood,
                             action: { selectedMood = mood }
                         )
                     }
                 }
-                .padding(.horizontal)
+                .padding(themeManager.padding)
                 
-                // Intensity slider
-                VStack(spacing: ThemeManager.smallPadding) {
-                    Text("Intensity: \(Int(intensity * 100))%")
+                // Intensity Slider
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Intensity")
                         .font(.headline)
                         .foregroundColor(themeManager.textColor)
                     
-                    Slider(value: $intensity, in: 0...1)
+                    HStack {
+                        Text("1")
+                            .foregroundColor(themeManager.secondaryTextColor)
+                        
+                        Slider(value: Binding(
+                            get: { Double(selectedIntensity) },
+                            set: { selectedIntensity = Int($0) }
+                        ), in: 1...10, step: 1)
                         .accentColor(themeManager.accentColor)
+                        
+                        Text("10")
+                            .foregroundColor(themeManager.secondaryTextColor)
+                    }
+                    
+                    Text("Current: \(selectedIntensity)")
+                        .font(.caption)
+                        .foregroundColor(themeManager.secondaryTextColor)
                 }
-                .padding()
+                .padding(themeManager.padding)
                 .background(themeManager.cardBackgroundColor)
                 .cornerRadius(ThemeManager.cornerRadius)
+                .padding(.horizontal)
+                
+                // Custom Emoji Button
+                Button {
+                    showingEmojiPicker = true
+                } label: {
+                    HStack {
+                        Image(systemName: "face.smiling")
+                        Text("Choose Custom Emoji")
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(themeManager.cardBackgroundColor)
+                    .foregroundColor(themeManager.accentColor)
+                    .cornerRadius(ThemeManager.cornerRadius)
+                }
                 .padding(.horizontal)
                 
                 Spacer()
@@ -71,55 +82,65 @@ struct EnhancedMoodSelectionView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Done") {
-                        if let mood = selectedMood {
-                            onSelect(mood, intensity)
+                        dismiss()
+                    }
+                    .foregroundColor(themeManager.accentColor)
+                }
+            }
+            .sheet(isPresented: $showingEmojiPicker) {
+                EmojiPickerView(selectedEmoji: .constant("😊"))
+            }
+        }
+    }
+}
+
+struct EmojiPickerView: View {
+    @Binding var selectedEmoji: String
+    @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var themeManager: ThemeManager
+    
+    private let emojis = ["😊", "😌", "😐", "😔", "😢", "😡", "😴", "🤔", "😎", "🥰"]
+    
+    var body: some View {
+        NavigationView {
+            ScrollView {
+                LazyVGrid(columns: [
+                    GridItem(.flexible()),
+                    GridItem(.flexible()),
+                    GridItem(.flexible()),
+                    GridItem(.flexible())
+                ], spacing: themeManager.spacing) {
+                    ForEach(emojis, id: \.self) { emoji in
+                        Button {
+                            selectedEmoji = emoji
                             dismiss()
+                        } label: {
+                            Text(emoji)
+                                .font(.system(size: 32))
+                                .frame(maxWidth: .infinity)
+                                .padding(themeManager.padding)
+                                .background(themeManager.cardBackgroundColor)
+                                .cornerRadius(ThemeManager.cornerRadius)
                         }
                     }
-                    .disabled(selectedMood == nil)
+                }
+                .padding()
+            }
+            .navigationTitle("Choose Emoji")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Cancel") {
+                        dismiss()
+                    }
+                    .foregroundColor(themeManager.accentColor)
                 }
             }
         }
     }
 }
 
-/// A button that represents a mood option in the selection grid
-struct EnhancedMoodButton: View {
-    /// The mood represented by this button
-    let mood: Mood
-    
-    /// A boolean indicating whether this mood is selected
-    let isSelected: Bool
-    
-    /// The action to perform when the button is tapped
-    let action: () -> Void
-    
-    /// The environment object that provides theme-related functionality
-    @EnvironmentObject var themeManager: ThemeManager
-    
-    var body: some View {
-        Button(action: action) {
-            VStack(spacing: ThemeManager.smallPadding) {
-                Text(mood.emoji)
-                    .font(.system(size: 32))
-                
-                Text(mood.name)
-                    .font(.caption)
-                    .foregroundColor(isSelected ? .white : themeManager.textColor)
-            }
-            .frame(maxWidth: .infinity)
-            .padding()
-            .background(isSelected ? themeManager.accentColor : themeManager.cardBackgroundColor)
-            .cornerRadius(ThemeManager.cornerRadius)
-        }
-    }
-}
-
-// MARK: - Preview
-
-struct EnhancedMoodSelectionView_Previews: PreviewProvider {
-    static var previews: some View {
-        EnhancedMoodSelectionView { _, _ in }
-            .environmentObject(ThemeManager())
-    }
+#Preview {
+    EnhancedMoodSelectionView(selectedMood: .constant(.happy))
+        .environmentObject(ThemeManager())
 } 

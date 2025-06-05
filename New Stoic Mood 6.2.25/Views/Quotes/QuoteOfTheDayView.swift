@@ -8,22 +8,10 @@ struct QuoteOfTheDayView: View {
     var body: some View {
         VStack(spacing: 20) {
             // Quote Card
-            VStack(spacing: 16) {
-                Text(viewModel.dailyQuote.text)
-                    .font(.title2)
-                    .fontWeight(.medium)
-                    .multilineTextAlignment(.center)
-                    .foregroundColor(themeManager.textColor)
-                    .padding(.horizontal)
-            }
-            .padding()
-            .frame(maxWidth: .infinity)
-            .background(themeManager.cardBackgroundColor)
-            .cornerRadius(16)
-            .shadow(radius: 5)
-            .padding(.horizontal)
-            .scaleEffect(isAnimating ? 1.05 : 1.0)
-            .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isAnimating)
+            QuoteCard(quote: viewModel.dailyQuote)
+                .padding(.horizontal)
+                .scaleEffect(isAnimating ? 1.05 : 1.0)
+                .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isAnimating)
             
             // Action Buttons
             HStack(spacing: 20) {

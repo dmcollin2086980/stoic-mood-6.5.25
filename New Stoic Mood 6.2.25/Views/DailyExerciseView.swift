@@ -4,7 +4,6 @@ import Combine
 struct DailyExerciseView: View {
     @StateObject private var viewModel = DailyExerciseViewModel()
     @EnvironmentObject var reflectionVM: ReflectionViewModel
-    @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var themeManager: ThemeManager
     @State private var showingSaveAlert = false
     
@@ -14,9 +13,9 @@ struct DailyExerciseView: View {
                 themeManager.backgroundColor.ignoresSafeArea()
                 
                 ScrollView {
-                    VStack(spacing: 24) {
+                    VStack(spacing: themeManager.spacing) {
                         // Header with Quote
-                        VStack(spacing: 16) {
+                        VStack(spacing: themeManager.spacing) {
                             Text(viewModel.currentExercise.quote)
                                 .font(.title)
                                 .foregroundColor(themeManager.textColor)
@@ -24,10 +23,11 @@ struct DailyExerciseView: View {
                                 .padding()
                                 .background(themeManager.cardBackgroundColor)
                                 .cornerRadius(ThemeManager.cornerRadius)
+                                .accessibilityLabel("Daily Stoic Quote")
                         }
                         
                         // Exercise Content
-                        VStack(alignment: .leading, spacing: 16) {
+                        VStack(alignment: .leading, spacing: themeManager.spacing) {
                             Text("Today's Exercise")
                                 .font(.headline)
                                 .foregroundColor(themeManager.textColor)
@@ -38,10 +38,11 @@ struct DailyExerciseView: View {
                                 .padding()
                                 .background(themeManager.cardBackgroundColor)
                                 .cornerRadius(ThemeManager.cornerRadius)
+                                .accessibilityLabel("Exercise Description")
                         }
                         
                         // Action Steps
-                        VStack(alignment: .leading, spacing: 16) {
+                        VStack(alignment: .leading, spacing: themeManager.spacing) {
                             Text("Action Steps")
                                 .font(.headline)
                                 .foregroundColor(themeManager.textColor)
@@ -62,6 +63,7 @@ struct DailyExerciseView: View {
                         .padding()
                         .background(themeManager.cardBackgroundColor)
                         .cornerRadius(ThemeManager.cornerRadius)
+                        .accessibilityLabel("Exercise Steps")
                         
                         // Reflection Section
                         if viewModel.isExerciseComplete {
@@ -79,6 +81,7 @@ struct DailyExerciseView: View {
                                 .background(themeManager.cardBackgroundColor)
                                 .cornerRadius(ThemeManager.cornerRadius)
                             }
+                            .accessibilityLabel("View Reflection History")
                         }
                         
                         // Complete Button
@@ -96,25 +99,13 @@ struct DailyExerciseView: View {
                                     .background(themeManager.accentColor)
                                     .cornerRadius(ThemeManager.cornerRadius)
                             }
+                            .accessibilityLabel("Complete Exercise")
                         }
                     }
                     .padding()
                 }
             }
-            .navigationTitle("Daily Exercise")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") {
-                        if !viewModel.reflectionText.isEmpty {
-                            reflectionVM.addReflection(content: viewModel.reflectionText)
-                            viewModel.reflectionText = ""
-                        }
-                        dismiss()
-                    }
-                    .foregroundColor(themeManager.accentColor)
-                }
-            }
             .alert("Reflection Saved", isPresented: $showingSaveAlert) {
                 Button("OK", role: .cancel) { }
             } message: {
@@ -171,19 +162,24 @@ struct ExerciseReflectionView: View {
     @Binding var showingSaveAlert: Bool
     
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: themeManager.spacing) {
             Text("Reflection Prompt")
                 .font(.headline)
                 .foregroundColor(themeManager.textColor)
+            
             TextEditor(text: $viewModel.reflectionText)
                 .frame(height: 120)
                 .padding()
                 .background(themeManager.cardBackgroundColor)
-                .cornerRadius(12)
+                .cornerRadius(ThemeManager.cornerRadius)
                 .foregroundColor(themeManager.textColor)
+            
             Button("Save Reflection") {
                 if !viewModel.reflectionText.isEmpty {
-                    reflectionVM.addReflection(content: viewModel.reflectionText)
+                    reflectionVM.addReflection(
+                        content: viewModel.reflectionText,
+                        exercisePrompt: viewModel.currentExercise.exercise
+                    )
                     viewModel.reflectionText = ""
                     showingSaveAlert = true
                 }
@@ -191,11 +187,11 @@ struct ExerciseReflectionView: View {
             .padding()
             .background(themeManager.accentColor)
             .foregroundColor(.white)
-            .cornerRadius(8)
+            .cornerRadius(ThemeManager.cornerRadius)
         }
         .padding()
         .background(themeManager.cardBackgroundColor)
-        .cornerRadius(12)
+        .cornerRadius(ThemeManager.cornerRadius)
     }
 }
 

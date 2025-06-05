@@ -15,22 +15,6 @@ struct StoicQuoteView: View {
                 .opacity(isAnimating ? 1 : 0)
                 .animation(.easeInOut(duration: 0.5), value: isAnimating)
                 .themeCard(themeManager: themeManager)
-            
-            Button(action: {
-                withAnimation {
-                    isAnimating = false
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                        currentQuote = StoicQuotesManager.shared.getRandomQuote()
-                        isAnimating = true
-                        let generator = UIImpactFeedbackGenerator(style: .medium)
-                        generator.impactOccurred()
-                    }
-                }
-            }) {
-                Text("New Quote")
-                    .font(.headline)
-            }
-            .themePrimaryButton(themeManager: themeManager)
         }
         .padding()
         .onAppear {

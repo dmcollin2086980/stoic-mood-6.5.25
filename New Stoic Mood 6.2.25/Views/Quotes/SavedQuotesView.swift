@@ -13,22 +13,27 @@ struct SavedQuotesView: View {
                     .italic()
             } else {
                 ForEach(viewModel.savedQuotes) { quote in
-                    Button(action: { selectedQuote = quote }) {
-                        Text(quote.text)
-                            .foregroundColor(themeManager.textColor)
-                            .lineLimit(2)
-                    }
-                }
-                .onDelete { indexSet in
-                    for index in indexSet {
-                        viewModel.removeSavedQuote(viewModel.savedQuotes[index])
-                    }
+                    QuoteCard(quote: quote)
+                        .listRowInsets(EdgeInsets())
+                        .listRowBackground(Color.clear)
+                        .padding(.vertical, 8)
+                        .onTapGesture {
+                            selectedQuote = quote
+                        }
+                        .swipeActions {
+                            Button(role: .destructive) {
+                                viewModel.removeSavedQuote(quote)
+                            } label: {
+                                Label("Remove", systemImage: "trash")
+                            }
+                        }
                 }
             }
         }
-        .navigationTitle("Saved Quotes")
+        .listStyle(PlainListStyle())
+        .background(themeManager.backgroundColor)
         .sheet(item: $selectedQuote) { quote in
-            NavigationView {
+            NavigationStack {
                 QuoteDetailView(quote: quote, viewModel: viewModel)
             }
         }
@@ -36,7 +41,7 @@ struct SavedQuotesView: View {
 }
 
 #Preview {
-    NavigationView {
+    NavigationStack {
         SavedQuotesView(viewModel: QuoteViewModel())
             .environmentObject(ThemeManager())
     }

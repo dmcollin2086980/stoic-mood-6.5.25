@@ -10,7 +10,7 @@ struct QuoteDetailView: View {
         ScrollView {
             VStack(spacing: 20) {
                 // Quote Card
-                QuoteCard(quote: quote.text, author: quote.author)
+                QuoteCard(quote: quote)
                     .padding(.horizontal)
                 
                 // Actions

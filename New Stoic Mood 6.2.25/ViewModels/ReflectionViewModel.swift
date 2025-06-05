@@ -51,8 +51,8 @@ class ReflectionViewModel: ObservableObject {
         return streak
     }
     
-    func addReflection(content: String) {
-        let reflection = Reflection(content: content)
+    func addReflection(content: String, exercisePrompt: String) {
+        let reflection = Reflection(content: content, exercisePrompt: exercisePrompt)
         reflections.insert(reflection, at: 0)
         saveReflections()
     }

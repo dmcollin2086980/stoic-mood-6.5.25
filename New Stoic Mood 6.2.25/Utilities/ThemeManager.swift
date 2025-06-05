@@ -4,25 +4,48 @@ import SwiftUI
 /// This class provides access to colors, spacing, and styling modifiers that can be used
 /// throughout the app to maintain consistent design.
 class ThemeManager: ObservableObject {
+    static let shared = ThemeManager()
+    static let cornerRadius: CGFloat = 12
+    
     @Published var isDarkMode: Bool {
         didSet {
             UserDefaults.standard.set(isDarkMode, forKey: "isDarkMode")
         }
     }
     
-    // MARK: - Constants
+    // System colors
+    var backgroundColor: Color {
+        Color(.systemBackground)
+    }
     
-    /// The standard corner radius used throughout the app
-    static let cornerRadius: CGFloat = 12
+    var cardBackgroundColor: Color {
+        Color(.secondarySystemBackground)
+    }
     
-    /// The standard padding used for most views
-    static let padding: CGFloat = 16
+    var textColor: Color {
+        Color(.label)
+    }
     
-    /// A smaller padding value used for compact views
-    static let smallPadding: CGFloat = 8
+    var secondaryTextColor: Color {
+        Color(.secondaryLabel)
+    }
     
-    /// The standard animation duration used for transitions
-    static let animationDuration: Double = 0.3
+    var borderColor: Color {
+        Color(.separator)
+    }
+    
+    var accentColor: Color {
+        Color.accentColor
+    }
+    
+    // Layout constants
+    let spacing: CGFloat = 16
+    let padding: CGFloat = 16
+    let iconSize: CGFloat = 24
+    let buttonHeight: CGFloat = 44
+    let cardPadding: CGFloat = 16
+    let shadowRadius: CGFloat = 4
+    let shadowOpacity: Double = 0.1
     
     init() {
         self.isDarkMode = UserDefaults.standard.bool(forKey: "isDarkMode")
@@ -34,26 +57,8 @@ class ThemeManager: ObservableObject {
     
     // MARK: - Colors
     
-    /// The main background color of the app
-    var backgroundColor: Color { Color("AppBackground") }
-    
-    /// The background color used for cards and elevated surfaces
-    var cardBackgroundColor: Color { Color("CardBackgroundColor") }
-    
-    /// The primary accent color used for interactive elements
-    var accentColor: Color { Color("AccentColor") }
-    
     /// A secondary accent color used for less prominent interactive elements
     var secondaryAccentColor: Color { Color("SecondaryAccentColor") }
-    
-    /// The primary text color used for most content
-    var textColor: Color { Color("TextColor") }
-    
-    /// A secondary text color used for less prominent text
-    var secondaryTextColor: Color { Color("SecondaryTextColor") }
-    
-    /// The color used for borders and dividers
-    var borderColor: Color { Color("BorderColor") }
     
     /// The color used to indicate success states
     var successColor: Color { Color("SuccessColor") }
@@ -151,4 +156,26 @@ extension View {
     func themeSecondaryButton(themeManager: ThemeManager) -> some View {
         self.modifier(themeManager.secondaryButtonStyle())
     }
+}
+
+// MARK: - Color Extensions
+extension Color {
+    static let systemBackground = Color(.systemBackground)
+    static let secondarySystemBackground = Color(.secondarySystemBackground)
+    static let tertiarySystemBackground = Color(.tertiarySystemBackground)
+    static let systemGroupedBackground = Color(.systemGroupedBackground)
+    static let secondarySystemGroupedBackground = Color(.secondarySystemGroupedBackground)
+    
+    static let label = Color(.label)
+    static let secondaryLabel = Color(.secondaryLabel)
+    static let tertiaryLabel = Color(.tertiaryLabel)
+    static let quaternaryLabel = Color(.quaternaryLabel)
+    
+    static let separator = Color(.separator)
+    static let opaqueSeparator = Color(.opaqueSeparator)
+    
+    static let systemFill = Color(.systemFill)
+    static let secondarySystemFill = Color(.secondarySystemFill)
+    static let tertiarySystemFill = Color(.tertiarySystemFill)
+    static let quaternarySystemFill = Color(.quaternarySystemFill)
 } 

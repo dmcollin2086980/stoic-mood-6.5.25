@@ -15,17 +15,31 @@ struct ReflectionHistoryView: View {
             } else {
                 ForEach(reflectionVM.reflections) { reflection in
                     NavigationLink(destination: ReflectionDetailView(reflection: reflection)) {
-                        VStack(alignment: .leading, spacing: 8) {
+                        VStack(alignment: .leading, spacing: 12) {
+                            // Date
                             Text(reflection.date.formatted(date: .long, time: .omitted))
                                 .font(.subheadline)
                                 .foregroundColor(themeManager.secondaryTextColor)
                             
+                            // Exercise Prompt
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("Today's Exercise:")
+                                    .font(.subheadline)
+                                    .foregroundColor(themeManager.secondaryTextColor)
+                                
+                                Text(reflection.exercisePrompt)
+                                    .font(.subheadline)
+                                    .foregroundColor(themeManager.secondaryTextColor)
+                                    .italic()
+                            }
+                            
+                            // Reflection Response
                             Text(reflection.content)
                                 .font(.body)
                                 .foregroundColor(themeManager.textColor)
                                 .lineLimit(2)
                         }
-                        .padding(.vertical, 4)
+                        .padding(.vertical, 8)
                     }
                 }
                 .onDelete { indexSet in

@@ -38,19 +38,22 @@ struct JournalView: View {
             let matchesSearch = searchText.isEmpty || 
                 entry.content.localizedCaseInsensitiveContains(searchText)
             
-            let matchesFilter: Bool
-            switch selectedFilter {
-            case .all:
-                matchesFilter = true
-            case .thisWeek:
-                matchesFilter = Calendar.current.isDate(entry.date, equalTo: Date(), toGranularity: .weekOfYear)
-            case .thisMonth:
-                matchesFilter = Calendar.current.isDate(entry.date, equalTo: Date(), toGranularity: .month)
-            case .thisYear:
-                matchesFilter = Calendar.current.isDate(entry.date, equalTo: Date(), toGranularity: .year)
-            }
+            let matchesFilter = matchesFilterCriteria(entry)
             
             return matchesSearch && matchesFilter
+        }
+    }
+    
+    private func matchesFilterCriteria(_ entry: JournalEntry) -> Bool {
+        switch selectedFilter {
+        case .all:
+            return true
+        case .thisWeek:
+            return Calendar.current.isDate(entry.date, equalTo: Date(), toGranularity: .weekOfYear)
+        case .thisMonth:
+            return Calendar.current.isDate(entry.date, equalTo: Date(), toGranularity: .month)
+        case .thisYear:
+            return Calendar.current.isDate(entry.date, equalTo: Date(), toGranularity: .year)
         }
     }
     
@@ -61,13 +64,13 @@ struct JournalView: View {
             ZStack {
                 themeManager.backgroundColor.ignoresSafeArea()
                 
-                VStack(spacing: ThemeManager.padding) {
+                VStack(spacing: themeManager.spacing) {
                     // Search bar
                     SearchBar(text: $searchText)
                         .padding(.horizontal)
                     
                     // Filter buttons
-                    HStack(spacing: ThemeManager.smallPadding) {
+                    HStack(spacing: themeManager.spacing) {
                         ForEach(JournalFilter.allCases, id: \.self) { filter in
                             FilterButton(
                                 title: filter.title,
@@ -80,7 +83,7 @@ struct JournalView: View {
                     
                     // Journal entries list
                     ScrollView {
-                        LazyVStack(spacing: ThemeManager.padding) {
+                        LazyVStack(spacing: themeManager.spacing) {
                             ForEach(filteredEntries) { entry in
                                 JournalEntryCard(entry: entry)
                             }
@@ -110,7 +113,6 @@ struct JournalView: View {
                     }
                 }
             }
-            .navigationTitle("Journal")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: { showingExportOptions = true }) {
@@ -173,8 +175,8 @@ struct FilterButton: View {
     var body: some View {
         Button(action: action) {
             Text(title)
-                .padding(.horizontal, ThemeManager.padding)
-                .padding(.vertical, ThemeManager.smallPadding)
+                .padding(.horizontal, themeManager.padding)
+                .padding(.vertical, themeManager.spacing)
                 .background(isSelected ? themeManager.accentColor : themeManager.cardBackgroundColor)
                 .foregroundColor(isSelected ? .white : themeManager.textColor)
                 .cornerRadius(ThemeManager.cornerRadius)
@@ -191,11 +193,11 @@ struct JournalEntryCard: View {
     @EnvironmentObject var themeManager: ThemeManager
     
     var body: some View {
-        VStack(alignment: .leading, spacing: ThemeManager.smallPadding) {
+        VStack(alignment: .leading, spacing: themeManager.spacing) {
             HStack {
                 Text(entry.mood.emoji)
                     .font(.title)
-                Text(entry.mood.name)
+                Text(entry.mood.rawValue)
                     .font(.headline)
                 Spacer()
                 Text(entry.date, style: .date)
@@ -234,44 +236,112 @@ struct ExportOptionsView: View {
     /// A boolean indicating whether the view is presented
     @Environment(\.dismiss) private var dismiss
     
+    /// State variables for export process
+    @State private var isExporting = false
+    @State private var showingShareSheet = false
+    @State private var exportURL: URL?
+    @State private var showingError = false
+    @State private var errorMessage = ""
+    
     var body: some View {
         NavigationStack {
             List {
                 Section {
-                    Button("Export as PDF") {
-                        // TODO: Implement PDF export
-                        dismiss()
+                    Button(action: exportPDF) {
+                        HStack {
+                            Image(systemName: "doc.fill")
+                            Text("Export as PDF")
+                        }
                     }
+                    .disabled(isExporting)
                     
-                    Button("Export as CSV") {
-                        // TODO: Implement CSV export
-                        dismiss()
+                    Button(action: exportCSV) {
+                        HStack {
+                            Image(systemName: "tablecells")
+                            Text("Export as CSV")
+                        }
                     }
-                    
-                    Button("Export as JSON") {
-                        // TODO: Implement JSON export
-                        dismiss()
-                    }
+                    .disabled(isExporting)
                 }
             }
             .navigationTitle("Export Options")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") {
+                    Button("Cancel") {
                         dismiss()
                     }
                 }
+            }
+            .overlay {
+                if isExporting {
+                    ProgressView("Exporting...")
+                        .padding()
+                        .background(themeManager.cardBackgroundColor)
+                        .cornerRadius(ThemeManager.cornerRadius)
+                }
+            }
+            .alert("Export Error", isPresented: $showingError) {
+                Button("OK", role: .cancel) { }
+            } message: {
+                Text(errorMessage)
+            }
+            .sheet(isPresented: $showingShareSheet) {
+                if let url = exportURL {
+                    ShareSheet(activityItems: [url])
+                }
+            }
+        }
+    }
+    
+    private func exportPDF() {
+        guard !journalManager.entries.isEmpty else {
+            errorMessage = "No entries to export"
+            showingError = true
+            return
+        }
+        
+        isExporting = true
+        
+        ExportManager.shared.exportToPDF(entries: journalManager.entries) { result in
+            isExporting = false
+            
+            switch result {
+            case .success(let url):
+                exportURL = url
+                showingShareSheet = true
+            case .failure(let error):
+                errorMessage = error.localizedDescription
+                showingError = true
+            }
+        }
+    }
+    
+    private func exportCSV() {
+        guard !journalManager.entries.isEmpty else {
+            errorMessage = "No entries to export"
+            showingError = true
+            return
+        }
+        
+        isExporting = true
+        
+        ExportManager.shared.exportToCSV(entries: journalManager.entries) { result in
+            isExporting = false
+            
+            switch result {
+            case .success(let url):
+                exportURL = url
+                showingShareSheet = true
+            case .failure(let error):
+                errorMessage = error.localizedDescription
+                showingError = true
             }
         }
     }
 }
 
-// MARK: - Preview
-
-struct JournalView_Previews: PreviewProvider {
-    static var previews: some View {
-        JournalView()
-            .environmentObject(ThemeManager())
-    }
+#Preview {
+    JournalView()
+        .environmentObject(ThemeManager())
 } 

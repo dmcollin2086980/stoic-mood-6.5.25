@@ -1,43 +1,65 @@
 import SwiftUI
 
 struct MoodButton: View {
-    let mood: MoodType
+    let mood: Any
     let isSelected: Bool
     let action: () -> Void
     @EnvironmentObject private var themeManager: ThemeManager
     
+    private var emoji: String {
+        if let moodType = mood as? MoodType {
+            return moodType.emoji
+        } else if let mood = mood as? Mood {
+            return mood.emoji
+        }
+        return "😐"
+    }
+    
+    private var displayName: String {
+        if let moodType = mood as? MoodType {
+            return moodType.displayName
+        } else if let mood = mood as? Mood {
+            return mood.rawValue
+        }
+        return "Unknown"
+    }
+    
     var body: some View {
         Button(action: action) {
-            VStack(spacing: 12) {
-                Text(mood.emoji)
+            VStack(spacing: 8) {
+                Text(emoji)
                     .font(.system(size: 32))
                 
-                Text(mood.displayName)
-                    .font(.body)
+                Text(displayName)
+                    .font(.caption)
                     .foregroundColor(themeManager.textColor)
             }
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 16)
-            .background(
-                isSelected ?
-                themeManager.accentColor :
-                themeManager.cardBackgroundColor
-            )
-            .cornerRadius(12)
+            .padding(themeManager.padding)
+            .background(isSelected ? themeManager.accentColor.opacity(0.2) : themeManager.cardBackgroundColor)
+            .cornerRadius(ThemeManager.cornerRadius)
             .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(themeManager.borderColor, lineWidth: 1)
+                RoundedRectangle(cornerRadius: ThemeManager.cornerRadius)
+                    .stroke(isSelected ? themeManager.accentColor : themeManager.borderColor, lineWidth: 1)
             )
         }
     }
 }
 
 #Preview {
-    MoodButton(
-        mood: .calm,
-        isSelected: true,
-        action: {}
-    )
+    VStack(spacing: 20) {
+        MoodButton(
+            mood: MoodType.calm,
+            isSelected: true,
+            action: {}
+        )
+        
+        MoodButton(
+            mood: Mood.happy,
+            isSelected: false,
+            action: {}
+        )
+    }
     .environmentObject(ThemeManager())
     .padding()
 } 
