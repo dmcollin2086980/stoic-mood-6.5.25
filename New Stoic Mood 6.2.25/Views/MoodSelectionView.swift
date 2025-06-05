@@ -7,6 +7,7 @@ struct MoodSelectionView: View {
     @State private var searchText = ""
     @State private var selectedCategory: MoodCategory = .positive
     @EnvironmentObject private var themeManager: ThemeManager
+    @EnvironmentObject private var moodVM: MoodViewModel
     let onMoodSelected: (MoodType, Int) -> Void
     
     private var filteredMoods: [Mood] {
@@ -117,4 +118,5 @@ struct MoodSelectionView: View {
 #Preview {
     MoodSelectionView(onMoodSelected: { _, _ in })
         .environmentObject(ThemeManager())
+        .environmentObject(MoodViewModel())
 } 

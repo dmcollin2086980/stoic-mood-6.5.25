@@ -1,52 +1,78 @@
 import Foundation
 import SwiftUI
 
-struct ExerciseEntry: Identifiable, Codable {
-    let id: UUID
-    let date: Date
-    let prompt: String
-    let response: String
-    let timestamp: Date
-    
-    init(id: UUID = UUID(), date: Date = Date(), prompt: String, response: String, timestamp: Date = Date()) {
-        self.id = id
-        self.date = date
-        self.prompt = prompt
-        self.response = response
-        self.timestamp = timestamp
-    }
-}
-
 class ExerciseViewModel: ObservableObject {
-    @Published var exercises: [ExerciseEntry] = []
-    private let userDefaults = UserDefaults.standard
-    private let exercisesKey = "SavedExercises"
+    // MARK: - Published Properties
+    @Published var dailyExercise: StoicExercise?
+    @Published var exerciseHistory: [ExerciseEntry] = []
     
+    // MARK: - Initialization
     init() {
-        loadExercises()
+        loadData()
+        generateDailyExercise()
     }
     
-    public func addExercise(date: Date, prompt: String, response: String) {
-        let entry = ExerciseEntry(date: date, prompt: prompt, response: response)
-        exercises.insert(entry, at: 0)
-        saveExercises()
+    // MARK: - Data Management
+    func clearAllData() {
+        exerciseHistory.removeAll()
+        saveData()
     }
     
-    public func clearAll() {
-        exercises.removeAll()
-        saveExercises()
+    // MARK: - Private Methods
+    private func generateDailyExercise() {
+        let exercises = [
+            StoicExercise(
+                id: UUID(),
+                date: Date(),
+                quote: "The happiness of your life depends upon the quality of your thoughts.",
+                author: "Marcus Aurelius",
+                exercise: "Practice negative visualization by imagining the loss of something you value. This exercise helps cultivate gratitude and resilience.",
+                steps: [
+                    "Choose something you value (e.g., health, relationships, career)",
+                    "Imagine it being taken away",
+                    "Reflect on how you would cope",
+                    "Appreciate what you have now",
+                    "Write down your insights"
+                ]
+            ),
+            StoicExercise(
+                id: UUID(),
+                date: Date(),
+                quote: "We suffer more in imagination than in reality.",
+                author: "Seneca",
+                exercise: "Challenge your assumptions about what you fear. This exercise helps reduce anxiety and build resilience.",
+                steps: [
+                    "Identify a current worry or fear",
+                    "Question its likelihood and impact",
+                    "Consider the worst-case scenario",
+                    "Plan how you would handle it",
+                    "Take action to reduce the risk"
+                ]
+            ),
+            StoicExercise(
+                id: UUID(),
+                date: Date(),
+                quote: "The obstacle is the way.",
+                author: "Epictetus",
+                exercise: "Embrace challenges as opportunities for growth. This exercise helps develop resilience and problem-solving skills.",
+                steps: [
+                    "Identify a current obstacle or challenge",
+                    "Reframe it as an opportunity",
+                    "Break it down into manageable steps",
+                    "Take the first step forward",
+                    "Reflect on what you learned"
+                ]
+            )
+        ]
+        
+        dailyExercise = exercises.randomElement()
     }
     
-    public func saveExercises() {
-        if let encoded = try? JSONEncoder().encode(exercises) {
-            userDefaults.set(encoded, forKey: exercisesKey)
-        }
+    private func loadData() {
+        // Implementation for loading data from storage
     }
     
-    private func loadExercises() {
-        if let data = userDefaults.data(forKey: exercisesKey),
-           let decoded = try? JSONDecoder().decode([ExerciseEntry].self, from: data) {
-            exercises = decoded.sorted { $0.date > $1.date }
-        }
+    private func saveData() {
+        // Implementation for saving data to storage
     }
 } 

@@ -4,15 +4,18 @@ struct QuoteCard: View {
     let quote: StoicQuote
     @EnvironmentObject private var themeManager: ThemeManager
     
+    private let shadowOpacity: Double = 0.1
+    private let shadowRadius: CGFloat = 4
+    
     var body: some View {
-        VStack(alignment: .leading, spacing: themeManager.spacing) {
+        VStack(alignment: .leading, spacing: ThemeManager.padding) {
             Text(quote.text)
                 .font(.body)
                 .italic()
                 .foregroundColor(themeManager.textColor)
                 .multilineTextAlignment(.leading)
             
-            Text("— \(quote.author)")
+            Text("- \(quote.author)")
                 .font(.subheadline)
                 .foregroundColor(themeManager.secondaryTextColor)
                 .frame(maxWidth: .infinity, alignment: .trailing)
@@ -21,7 +24,7 @@ struct QuoteCard: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(themeManager.cardBackgroundColor)
         .cornerRadius(ThemeManager.cornerRadius)
-        .shadow(color: Color.black.opacity(themeManager.shadowOpacity), radius: themeManager.shadowRadius, x: 0, y: 2)
+        .shadow(color: Color.black.opacity(shadowOpacity), radius: shadowRadius, x: 0, y: 2)
         .overlay(
             RoundedRectangle(cornerRadius: ThemeManager.cornerRadius)
                 .stroke(themeManager.borderColor, lineWidth: 1)

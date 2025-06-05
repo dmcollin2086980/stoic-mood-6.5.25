@@ -14,7 +14,8 @@ struct StoicQuoteView: View {
                 .padding()
                 .opacity(isAnimating ? 1 : 0)
                 .animation(.easeInOut(duration: 0.5), value: isAnimating)
-                .themeCard(themeManager: themeManager)
+                .background(themeManager.cardBackgroundColor)
+                .cornerRadius(ThemeManager.cornerRadius)
         }
         .padding()
         .onAppear {

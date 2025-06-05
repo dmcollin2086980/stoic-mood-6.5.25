@@ -38,6 +38,8 @@ class ThemeManager: ObservableObject {
     static let shared = ThemeManager()
     static let cornerRadius: CGFloat = 12
     static let spacing: CGFloat = 16
+    static let padding: CGFloat = 16
+    static let smallPadding: CGFloat = 8
     
     @Published var currentTheme: ThemeType {
         didSet {
@@ -45,116 +47,44 @@ class ThemeManager: ObservableObject {
         }
     }
     
+    @Published var isDarkMode: Bool {
+        didSet {
+            UserDefaults.standard.set(isDarkMode, forKey: "isDarkMode")
+        }
+    }
+    
     init() {
         let savedTheme = UserDefaults.standard.string(forKey: "selectedTheme") ?? ThemeType.classicStoic.rawValue
         self.currentTheme = ThemeType(rawValue: savedTheme) ?? .classicStoic
+        self.isDarkMode = UserDefaults.standard.bool(forKey: "isDarkMode")
+    }
+    
+    func toggleTheme() {
+        withAnimation {
+            isDarkMode.toggle()
+        }
     }
     
     // MARK: - Theme Colors
     
     var backgroundColor: Color {
-        switch currentTheme {
-        case .classicStoic:
-            return Color(hex: "F5F5F5")
-        case .warmEarth:
-            return Color(hex: "F5F0E6")
-        case .oceanCalm:
-            return Color(hex: "F0F5F5")
-        case .forestSage:
-            return Color(hex: "F0F5F0")
-        case .sunsetGlow:
-            return Color(hex: "F5F0F0")
-        case .midnightDeep:
-            return Color(hex: "1A1A2E")
-        case .pureLight:
-            return Color(hex: "FFFFFF")
-        case .goldenWisdom:
-            return Color(hex: "F5F0E0")
-        }
+        isDarkMode ? Color.black : Color.white
     }
     
     var cardBackgroundColor: Color {
-        switch currentTheme {
-        case .classicStoic:
-            return Color(hex: "FFFFFF")
-        case .warmEarth:
-            return Color(hex: "FFFFFF")
-        case .oceanCalm:
-            return Color(hex: "FFFFFF")
-        case .forestSage:
-            return Color(hex: "FFFFFF")
-        case .sunsetGlow:
-            return Color(hex: "FFFFFF")
-        case .midnightDeep:
-            return Color(hex: "252A40")
-        case .pureLight:
-            return Color(hex: "F8F8F8")
-        case .goldenWisdom:
-            return Color(hex: "FFFFFF")
-        }
+        isDarkMode ? Color(white: 0.1) : Color(white: 0.95)
     }
     
     var textColor: Color {
-        switch currentTheme {
-        case .classicStoic:
-            return Color(hex: "2C3E50")
-        case .warmEarth:
-            return Color(hex: "4A3C31")
-        case .oceanCalm:
-            return Color(hex: "1A3C4A")
-        case .forestSage:
-            return Color(hex: "2C4A3C")
-        case .sunsetGlow:
-            return Color(hex: "4A3C31")
-        case .midnightDeep:
-            return Color(hex: "E0E0E0")
-        case .pureLight:
-            return Color(hex: "2C3E50")
-        case .goldenWisdom:
-            return Color(hex: "4A3C31")
-        }
+        isDarkMode ? Color.white : Color.black
     }
     
     var secondaryTextColor: Color {
-        switch currentTheme {
-        case .classicStoic:
-            return Color(hex: "7F8C8D")
-        case .warmEarth:
-            return Color(hex: "8C7F6D")
-        case .oceanCalm:
-            return Color(hex: "6D8C9C")
-        case .forestSage:
-            return Color(hex: "6D8C7F")
-        case .sunsetGlow:
-            return Color(hex: "8C7F6D")
-        case .midnightDeep:
-            return Color(hex: "B0B0B0")
-        case .pureLight:
-            return Color(hex: "7F8C8D")
-        case .goldenWisdom:
-            return Color(hex: "8C7F6D")
-        }
+        isDarkMode ? Color.gray : Color.gray
     }
     
     var accentColor: Color {
-        switch currentTheme {
-        case .classicStoic:
-            return Color(hex: "3498DB")
-        case .warmEarth:
-            return Color(hex: "D4A373")
-        case .oceanCalm:
-            return Color(hex: "2E86C1")
-        case .forestSage:
-            return Color(hex: "2E8B57")
-        case .sunsetGlow:
-            return Color(hex: "E67E22")
-        case .midnightDeep:
-            return Color(hex: "9B59B6")
-        case .pureLight:
-            return Color(hex: "3498DB")
-        case .goldenWisdom:
-            return Color(hex: "D4AF37")
-        }
+        Color.blue
     }
     
     var buttonColor: Color {

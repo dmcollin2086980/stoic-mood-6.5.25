@@ -2,141 +2,116 @@ import SwiftUI
 import Charts
 
 struct DashboardView: View {
-    @EnvironmentObject private var viewModel: MoodViewModel
     @EnvironmentObject private var themeManager: ThemeManager
-    @StateObject private var quoteVM = QuoteViewModel()
-    
-    private var weeklyEntries: [MoodEntry] {
-        let calendar = Calendar.current
-        let today = Date()
-        let weekAgo = calendar.date(byAdding: .day, value: -7, to: today)!
-        
-        return viewModel.moodEntries.filter { entry in
-            entry.timestamp >= weekAgo && entry.timestamp <= today
-        }
-    }
+    @EnvironmentObject private var moodVM: MoodViewModel
+    @EnvironmentObject private var quoteVM: QuoteViewModel
     
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(spacing: 20) {
-                    // Daily Stoic Wisdom
-                    DailyQuoteView(quote: quoteVM.dailyQuote, viewModel: quoteVM)
-                        .padding(.horizontal)
+        ScrollView {
+            VStack(spacing: ThemeManager.padding) {
+                // Daily Quote
+                VStack(alignment: .leading, spacing: ThemeManager.smallPadding) {
+                    Text("Daily Quote")
+                        .font(.headline)
+                        .foregroundColor(themeManager.textColor)
                     
-                    // Mood Flow Chart
-                    VStack(alignment: .leading, spacing: themeManager.spacing) {
-                        Text("Mood Flow")
-                            .font(.headline)
+                    if let quote = quoteVM.dailyQuote {
+                        Text(quote.text)
+                            .font(.body)
+                            .italic()
                             .foregroundColor(themeManager.textColor)
                         
-                        Chart {
-                            ForEach(viewModel.moodFlowData) { dataPoint in
-                                LineMark(
-                                    x: .value("Date", dataPoint.date),
-                                    y: .value("Mood", dataPoint.value)
-                                )
-                                .foregroundStyle(themeManager.accentColor)
-                                .lineStyle(StrokeStyle(lineWidth: 2))
-                                
-                                PointMark(
-                                    x: .value("Date", dataPoint.date),
-                                    y: .value("Mood", dataPoint.value)
-                                )
-                                .foregroundStyle(themeManager.accentColor)
-                            }
-                        }
-                        .frame(height: 200)
-                        .chartYScale(domain: 1...5)
-                        .chartXAxis {
-                            AxisMarks(values: .stride(by: .day)) { value in
-                                AxisGridLine()
-                                AxisValueLabel(format: .dateTime.weekday(.narrow))
-                            }
-                        }
-                        .chartYAxis {
-                            AxisMarks { value in
-                                AxisGridLine()
-                                AxisValueLabel {
-                                    if let intValue = value.as(Int.self) {
-                                        Text("\(intValue)")
-                                    }
-                                }
-                            }
-                        }
+                        Text("- \(quote.author)")
+                            .font(.subheadline)
+                            .foregroundColor(themeManager.secondaryTextColor)
                     }
-                    .padding()
-                    .background(themeManager.cardBackgroundColor)
-                    .cornerRadius(ThemeManager.cornerRadius)
+                }
+                .padding()
+                .background(themeManager.cardBackgroundColor)
+                .cornerRadius(ThemeManager.cornerRadius)
+                
+                // Mood Flow
+                VStack(alignment: .leading, spacing: ThemeManager.smallPadding) {
+                    Text("Mood Flow")
+                        .font(.headline)
+                        .foregroundColor(themeManager.textColor)
                     
-                    // This Week's Journey
-                    VStack(alignment: .leading, spacing: themeManager.spacing) {
-                        Text("This Week's Journey")
-                            .font(.headline)
-                            .foregroundColor(themeManager.textColor)
-                        
-                        HStack(spacing: 12) {
-                            ForEach(0..<7) { dayOffset in
-                                let date = Calendar.current.date(byAdding: .day, value: -6 + dayOffset, to: Date())!
-                                let entry = weeklyEntries.first { Calendar.current.isDate($0.timestamp, inSameDayAs: date) }
-                                
-                                VStack(spacing: 8) {
-                                    Text(entry?.mood.emoji ?? "📝")
-                                        .font(.title2)
-                                    Text(date.formatted(.dateTime.weekday(.narrow)))
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: ThemeManager.padding) {
+                            ForEach(moodVM.recentMoods) { entry in
+                                VStack {
+                                    Text(entry.emoji)
+                                        .font(.title)
+                                    Text(entry.date, style: .date)
                                         .font(.caption)
                                         .foregroundColor(themeManager.secondaryTextColor)
                                 }
-                                .frame(maxWidth: .infinity)
                             }
                         }
                     }
-                    .padding()
-                    .background(themeManager.cardBackgroundColor)
-                    .cornerRadius(ThemeManager.cornerRadius)
-                    
-                    // Statistics Cards
-                    LazyVGrid(columns: [
-                        GridItem(.flexible()),
-                        GridItem(.flexible())
-                    ], spacing: 16) {
-                        // Top Row
-                        StatCard(
-                            title: "Current Streak",
-                            value: "\(viewModel.calculateCurrentStreak())",
-                            icon: "flame.fill",
-                            color: .orange
-                        )
-                        
-                        StatCard(
-                            title: "Total Entries",
-                            value: "\(viewModel.moodEntries.count)",
-                            icon: "book.fill",
-                            color: .blue
-                        )
-                        
-                        // Bottom Row
-                        StatCard(
-                            title: "Reflection Streak",
-                            value: "\(viewModel.calculateReflectionStreak())",
-                            icon: "pencil.and.scribble",
-                            color: .green
-                        )
-                        
-                        StatCard(
-                            title: "Reflections",
-                            value: "\(viewModel.moodEntries.filter { $0.journalEntry != nil }.count)",
-                            icon: "text.book.closed.fill",
-                            color: .purple
-                        )
-                    }
-                    .padding(.horizontal)
                 }
-                .padding(.vertical)
+                .padding()
+                .background(themeManager.cardBackgroundColor)
+                .cornerRadius(ThemeManager.cornerRadius)
+                
+                // Statistics
+                LazyVGrid(columns: [
+                    GridItem(.flexible()),
+                    GridItem(.flexible())
+                ], spacing: ThemeManager.padding) {
+                    StatCard(
+                        title: "Mood Streak",
+                        value: "\(moodVM.currentStreak)",
+                        icon: "flame"
+                    )
+                    
+                    StatCard(
+                        title: "Journal Entries",
+                        value: "\(moodVM.journalEntryCount)",
+                        icon: "book"
+                    )
+                    
+                    StatCard(
+                        title: "Exercises",
+                        value: "\(moodVM.exerciseCount)",
+                        icon: "figure.walk"
+                    )
+                    
+                    StatCard(
+                        title: "Quotes",
+                        value: "\(quoteVM.quoteCount)",
+                        icon: "quote.bubble"
+                    )
+                }
+                
+                // Recent Activity
+                VStack(alignment: .leading, spacing: ThemeManager.smallPadding) {
+                    Text("Recent Activity")
+                        .font(.headline)
+                        .foregroundColor(themeManager.textColor)
+                    
+                    ForEach(moodVM.recentActivity) { activity in
+                        HStack {
+                            Image(systemName: activity.icon)
+                                .foregroundColor(themeManager.accentColor)
+                            Text(activity.description)
+                                .foregroundColor(themeManager.textColor)
+                            Spacer()
+                            Text(activity.date, style: .date)
+                                .font(.caption)
+                                .foregroundColor(themeManager.secondaryTextColor)
+                        }
+                        .padding()
+                        .background(themeManager.cardBackgroundColor)
+                        .cornerRadius(ThemeManager.cornerRadius)
+                    }
+                }
             }
-            .navigationTitle("Dashboard")
-            .background(themeManager.backgroundColor)
+            .padding()
         }
+        .background(themeManager.backgroundColor)
+        .navigationTitle("Dashboard")
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 
@@ -144,25 +119,23 @@ struct StatCard: View {
     let title: String
     let value: String
     let icon: String
-    let color: Color
     @EnvironmentObject private var themeManager: ThemeManager
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Image(systemName: icon)
-                    .foregroundColor(color)
-                Text(title)
-                    .font(.subheadline)
-                    .foregroundColor(themeManager.textColor)
-            }
+        VStack(spacing: ThemeManager.smallPadding) {
+            Image(systemName: icon)
+                .font(.title2)
+                .foregroundColor(themeManager.accentColor)
             
             Text(value)
-                .font(.title2)
-                .bold()
+                .font(.title)
                 .foregroundColor(themeManager.textColor)
+            
+            Text(title)
+                .font(.caption)
+                .foregroundColor(themeManager.secondaryTextColor)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
+        .frame(maxWidth: .infinity)
         .padding()
         .background(themeManager.cardBackgroundColor)
         .cornerRadius(ThemeManager.cornerRadius)
@@ -170,7 +143,10 @@ struct StatCard: View {
 }
 
 #Preview {
-    DashboardView()
-        .environmentObject(MoodViewModel())
-        .environmentObject(ThemeManager())
+    NavigationView {
+        DashboardView()
+            .environmentObject(ThemeManager())
+            .environmentObject(MoodViewModel())
+            .environmentObject(QuoteViewModel())
+    }
 } 

@@ -6,7 +6,7 @@ struct JournalView: View {
     // MARK: - Properties
     
     /// The environment object that provides theme-related functionality
-    @EnvironmentObject var themeManager: ThemeManager
+    @EnvironmentObject private var themeManager: ThemeManager
     
     /// The state object that manages journal entries
     @StateObject private var journalManager = JournalManager.shared
@@ -29,6 +29,10 @@ struct JournalView: View {
     
     /// A boolean indicating whether the export options view is presented
     @State private var showingExportOptions = false
+    
+    @StateObject private var viewModel = JournalViewModel()
+    @State private var showingPromptSheet = false
+    @State private var selectedPrompt: String?
     
     // MARK: - Computed Properties
     
@@ -64,13 +68,13 @@ struct JournalView: View {
             ZStack {
                 themeManager.backgroundColor.ignoresSafeArea()
                 
-                VStack(spacing: themeManager.spacing) {
+                VStack(spacing: ThemeManager.padding) {
                     // Search bar
                     SearchBar(text: $searchText, placeholder: "Search journal entries...")
                         .padding(.horizontal)
                     
                     // Filter buttons
-                    HStack(spacing: themeManager.spacing) {
+                    HStack(spacing: ThemeManager.spacing) {
                         ForEach(JournalFilter.allCases, id: \.self) { filter in
                             FilterButton(
                                 title: filter.title,
@@ -83,12 +87,73 @@ struct JournalView: View {
                     
                     // Journal entries list
                     ScrollView {
-                        LazyVStack(spacing: themeManager.spacing) {
+                        LazyVStack(spacing: ThemeManager.spacing) {
                             ForEach(filteredEntries) { entry in
                                 JournalEntryCard(entry: entry)
                             }
                         }
                         .padding()
+                    }
+                    
+                    // Journal Entry
+                    VStack(alignment: .leading, spacing: ThemeManager.smallPadding) {
+                        Text("Today's Reflection")
+                            .font(.headline)
+                            .foregroundColor(themeManager.textColor)
+                        
+                        TextEditor(text: $viewModel.journalText)
+                            .frame(minHeight: 150)
+                            .padding(ThemeManager.smallPadding)
+                            .background(themeManager.cardBackgroundColor)
+                            .cornerRadius(ThemeManager.cornerRadius)
+                            .foregroundColor(themeManager.textColor)
+                    }
+                    .padding()
+                    .background(themeManager.cardBackgroundColor)
+                    .cornerRadius(ThemeManager.cornerRadius)
+                    
+                    // Prompts Section
+                    VStack(alignment: .leading, spacing: ThemeManager.smallPadding) {
+                        HStack {
+                            Text("Reflection Prompts")
+                                .font(.headline)
+                                .foregroundColor(themeManager.textColor)
+                            
+                            Spacer()
+                            
+                            Button {
+                                showingPromptSheet = true
+                            } label: {
+                                Image(systemName: "plus.circle.fill")
+                                    .foregroundColor(themeManager.accentColor)
+                            }
+                        }
+                        
+                        if let prompt = selectedPrompt {
+                            Text(prompt)
+                                .font(.body)
+                                .foregroundColor(themeManager.secondaryTextColor)
+                                .padding(ThemeManager.smallPadding)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .background(themeManager.cardBackgroundColor)
+                                .cornerRadius(ThemeManager.cornerRadius)
+                        }
+                    }
+                    .padding()
+                    .background(themeManager.cardBackgroundColor)
+                    .cornerRadius(ThemeManager.cornerRadius)
+                    
+                    // Save Button
+                    Button {
+                        viewModel.saveJournalEntry()
+                    } label: {
+                        Text("Save Reflection")
+                            .font(.body)
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(themeManager.accentColor)
+                            .cornerRadius(ThemeManager.cornerRadius)
                     }
                 }
                 
@@ -145,6 +210,12 @@ struct JournalView: View {
             .sheet(isPresented: $showingExportOptions) {
                 ExportOptionsView()
             }
+            .sheet(isPresented: $showingPromptSheet) {
+                ReflectionPromptsView { prompt in
+                    selectedPrompt = prompt
+                    showingPromptSheet = false
+                }
+            }
             .onTapGesture {
                 UIApplication.shared.endEditing()
             }
@@ -175,8 +246,8 @@ struct FilterButton: View {
     var body: some View {
         Button(action: action) {
             Text(title)
-                .padding(.horizontal, themeManager.padding)
-                .padding(.vertical, themeManager.spacing)
+                .padding(.horizontal, ThemeManager.padding)
+                .padding(.vertical, ThemeManager.spacing)
                 .background(isSelected ? themeManager.accentColor : themeManager.cardBackgroundColor)
                 .foregroundColor(isSelected ? .white : themeManager.textColor)
                 .cornerRadius(ThemeManager.cornerRadius)
@@ -193,7 +264,7 @@ struct JournalEntryCard: View {
     @EnvironmentObject var themeManager: ThemeManager
     
     var body: some View {
-        VStack(alignment: .leading, spacing: themeManager.spacing) {
+        VStack(alignment: .leading, spacing: ThemeManager.spacing) {
             HStack {
                 Text(entry.mood.emoji)
                     .font(.title)
@@ -342,6 +413,8 @@ struct ExportOptionsView: View {
 }
 
 #Preview {
-    JournalView()
-        .environmentObject(ThemeManager())
+    NavigationView {
+        JournalView()
+            .environmentObject(ThemeManager())
+    }
 } 

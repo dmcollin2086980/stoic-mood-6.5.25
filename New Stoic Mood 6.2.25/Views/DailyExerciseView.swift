@@ -6,15 +6,19 @@ struct DailyExerciseView: View {
     @EnvironmentObject var reflectionVM: ReflectionViewModel
     @EnvironmentObject private var themeManager: ThemeManager
     @State private var showingSaveAlert = false
+    @EnvironmentObject private var exerciseVM: ExerciseViewModel
+    @State private var showingHistory = false
+    @State private var selectedPrompt: String?
+    @State private var showingPrompts = false
     
     var body: some View {
         ZStack {
             themeManager.backgroundColor.ignoresSafeArea()
             
             ScrollView {
-                VStack(spacing: themeManager.spacing) {
+                VStack(spacing: ThemeManager.padding) {
                     // Header with Quote
-                    VStack(spacing: themeManager.spacing) {
+                    VStack(spacing: ThemeManager.padding) {
                         Text(viewModel.currentExercise.quote)
                             .font(.title)
                             .foregroundColor(themeManager.textColor)
@@ -26,7 +30,7 @@ struct DailyExerciseView: View {
                     }
                     
                     // Exercise Content
-                    VStack(alignment: .leading, spacing: themeManager.spacing) {
+                    VStack(alignment: .leading, spacing: ThemeManager.padding) {
                         Text("Today's Exercise")
                             .font(.headline)
                             .foregroundColor(themeManager.textColor)
@@ -41,13 +45,13 @@ struct DailyExerciseView: View {
                     }
                     
                     // Action Steps
-                    VStack(alignment: .leading, spacing: themeManager.spacing) {
+                    VStack(alignment: .leading, spacing: ThemeManager.padding) {
                         Text("Action Steps")
                             .font(.headline)
                             .foregroundColor(themeManager.textColor)
                         
                         ForEach(viewModel.currentExercise.steps, id: \.self) { step in
-                            HStack(alignment: .top, spacing: 12) {
+                            HStack(alignment: .top, spacing: ThemeManager.smallPadding) {
                                 Image(systemName: "circle.fill")
                                     .font(.system(size: 8))
                                     .foregroundColor(themeManager.accentColor)
@@ -93,12 +97,11 @@ struct DailyExerciseView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                NavigationLink(destination: ExerciseHistoryView()) {
-                    HStack {
-                        Image(systemName: "clock.arrow.circlepath")
-                        Text("History")
-                    }
-                    .foregroundColor(themeManager.accentColor)
+                Button {
+                    showingHistory = true
+                } label: {
+                    Image(systemName: "clock.arrow.circlepath")
+                        .foregroundColor(themeManager.accentColor)
                 }
             }
         }
@@ -109,6 +112,14 @@ struct DailyExerciseView: View {
         }
         .onTapGesture {
             UIApplication.shared.endEditing()
+        }
+        .sheet(isPresented: $showingHistory) {
+            NavigationView {
+                ExerciseHistoryView()
+            }
+        }
+        .sheet(isPresented: $showingPrompts) {
+            ReflectionPromptsView(selectedPrompt: $selectedPrompt)
         }
     }
 }
@@ -141,23 +152,16 @@ class DailyExerciseViewModel: ObservableObject {
     }
 }
 
-struct StoicExercise: Identifiable {
-    let id: UUID
-    let date: Date
-    let quote: String
-    let author: String
-    let exercise: String
-    let steps: [String]
-}
-
 struct ExerciseReflectionView: View {
     @ObservedObject var viewModel: DailyExerciseViewModel
     @EnvironmentObject var reflectionVM: ReflectionViewModel
     @EnvironmentObject private var themeManager: ThemeManager
     @Binding var showingSaveAlert: Bool
+    @State private var showingPrompts = false
+    @State private var selectedPrompt: String?
     
     var body: some View {
-        VStack(spacing: themeManager.spacing) {
+        VStack(spacing: ThemeManager.padding) {
             Text("Reflection Prompt")
                 .font(.headline)
                 .foregroundColor(themeManager.textColor)
@@ -187,62 +191,15 @@ struct ExerciseReflectionView: View {
         .padding()
         .background(themeManager.cardBackgroundColor)
         .cornerRadius(ThemeManager.cornerRadius)
-    }
-}
-
-struct ReflectionPromptsView: View {
-    @Environment(\.dismiss) private var dismiss
-    @EnvironmentObject private var themeManager: ThemeManager
-    let selectedPrompt: (String) -> Void
-    
-    private let prompts = [
-        "What insights did you gain from this exercise?",
-        "How did this practice affect your perspective?",
-        "What challenges did you encounter?",
-        "How can you apply these insights in your daily life?",
-        "What would you like to explore further?"
-    ]
-    
-    var body: some View {
-        NavigationView {
-            ZStack {
-                themeManager.backgroundColor.ignoresSafeArea()
-                
-                ScrollView {
-                    LazyVStack(spacing: 16) {
-                        ForEach(prompts, id: \.self) { prompt in
-                            Button {
-                                selectedPrompt(prompt)
-                            } label: {
-                                Text(prompt)
-                                    .font(.body)
-                                    .foregroundColor(themeManager.textColor)
-                                    .multilineTextAlignment(.leading)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .padding()
-                                    .background(themeManager.cardBackgroundColor)
-                                    .cornerRadius(12)
-                            }
-                        }
-                    }
-                    .padding()
-                }
-            }
-            .navigationTitle("Reflection Prompts")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Cancel") {
-                        dismiss()
-                    }
-                }
-            }
+        .sheet(isPresented: $showingPrompts) {
+            ReflectionPromptsView(selectedPrompt: $selectedPrompt)
         }
     }
 }
 
 #Preview {
     DailyExerciseView()
-        .environmentObject(ReflectionViewModel())
         .environmentObject(ThemeManager())
+        .environmentObject(ReflectionViewModel())
+        .environmentObject(ExerciseViewModel())
 } 

@@ -3,92 +3,85 @@ import SwiftUI
 /// A view that allows users to select their mood and intensity level.
 /// This view provides a grid of mood options and a slider for intensity selection.
 struct EnhancedMoodSelectionView: View {
-    @Binding var selectedMood: Mood?
-    @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var themeManager: ThemeManager
-    @State private var selectedIntensity: Int = 5
+    @Binding var selectedMood: Mood?
+    @Binding var selectedIntensity: Double
+    var onSelect: (Mood, Double, String?) -> Void
+    @Environment(\.dismiss) private var dismiss
     @State private var showingEmojiPicker = false
-    
-    private let intensities = Array(1...10)
+    @State private var note: String = ""
     
     var body: some View {
         NavigationView {
-            VStack(spacing: themeManager.spacing) {
-                // Mood Selection Grid
-                LazyVGrid(columns: [
-                    GridItem(.flexible()),
-                    GridItem(.flexible()),
-                    GridItem(.flexible())
-                ], spacing: themeManager.spacing) {
-                    ForEach(Mood.allCases, id: \.self) { mood in
-                        MoodButton(
-                            mood: mood,
-                            isSelected: selectedMood == mood,
-                            action: { selectedMood = mood }
-                        )
-                    }
-                }
-                .padding(themeManager.padding)
-                
-                // Intensity Slider
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Intensity")
-                        .font(.headline)
-                        .foregroundColor(themeManager.textColor)
+            ScrollView {
+                VStack(spacing: ThemeManager.padding) {
+                    // Mood Display
+                    Text(selectedMood?.emoji ?? "")
+                        .font(.system(size: 60))
+                        .padding()
                     
-                    HStack {
-                        Text("1")
-                            .foregroundColor(themeManager.secondaryTextColor)
+                    // Intensity Slider
+                    VStack(alignment: .leading, spacing: ThemeManager.smallPadding) {
+                        Text("Intensity")
+                            .font(.headline)
+                            .foregroundColor(themeManager.textColor)
                         
-                        Slider(value: Binding(
-                            get: { Double(selectedIntensity) },
-                            set: { selectedIntensity = Int($0) }
-                        ), in: 1...10, step: 1)
-                        .accentColor(themeManager.accentColor)
+                        Slider(value: $selectedIntensity, in: 1.0...10.0, step: 1.0)
+                            .accentColor(themeManager.accentColor)
                         
-                        Text("10")
+                        Text("\(Int(selectedIntensity))")
+                            .font(.subheadline)
                             .foregroundColor(themeManager.secondaryTextColor)
                     }
-                    
-                    Text("Current: \(selectedIntensity)")
-                        .font(.caption)
-                        .foregroundColor(themeManager.secondaryTextColor)
-                }
-                .padding(themeManager.padding)
-                .background(themeManager.cardBackgroundColor)
-                .cornerRadius(ThemeManager.cornerRadius)
-                .padding(.horizontal)
-                
-                // Custom Emoji Button
-                Button {
-                    showingEmojiPicker = true
-                } label: {
-                    HStack {
-                        Image(systemName: "face.smiling")
-                        Text("Choose Custom Emoji")
-                    }
-                    .frame(maxWidth: .infinity)
                     .padding()
                     .background(themeManager.cardBackgroundColor)
-                    .foregroundColor(themeManager.accentColor)
                     .cornerRadius(ThemeManager.cornerRadius)
+                    
+                    // Note Input
+                    VStack(alignment: .leading, spacing: ThemeManager.smallPadding) {
+                        Text("Note (Optional)")
+                            .font(.headline)
+                            .foregroundColor(themeManager.textColor)
+                        
+                        TextEditor(text: $note)
+                            .frame(height: 100)
+                            .padding(ThemeManager.smallPadding)
+                            .background(themeManager.backgroundColor)
+                            .cornerRadius(ThemeManager.cornerRadius)
+                    }
+                    .padding()
+                    .background(themeManager.cardBackgroundColor)
+                    .cornerRadius(ThemeManager.cornerRadius)
+                    
+                    // Save Button
+                    Button {
+                        if let mood = selectedMood {
+                            onSelect(mood, selectedIntensity, note.isEmpty ? nil : note)
+                            dismiss()
+                        }
+                    } label: {
+                        Text("Save")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(themeManager.accentColor)
+                            .cornerRadius(ThemeManager.cornerRadius)
+                    }
+                    .disabled(selectedMood == nil)
                 }
-                .padding(.horizontal)
-                
-                Spacer()
+                .padding()
             }
-            .navigationTitle("Select Mood")
+            .background(themeManager.backgroundColor)
+            .navigationTitle("Record Mood")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") {
+                    Button("Cancel") {
                         dismiss()
                     }
                     .foregroundColor(themeManager.accentColor)
                 }
-            }
-            .sheet(isPresented: $showingEmojiPicker) {
-                EmojiPickerView(selectedEmoji: .constant("😊"))
             }
         }
     }
@@ -109,7 +102,7 @@ struct EmojiPickerView: View {
                     GridItem(.flexible()),
                     GridItem(.flexible()),
                     GridItem(.flexible())
-                ], spacing: themeManager.spacing) {
+                ], spacing: ThemeManager.spacing) {
                     ForEach(emojis, id: \.self) { emoji in
                         Button {
                             selectedEmoji = emoji
@@ -118,7 +111,7 @@ struct EmojiPickerView: View {
                             Text(emoji)
                                 .font(.system(size: 32))
                                 .frame(maxWidth: .infinity)
-                                .padding(themeManager.padding)
+                                .padding(ThemeManager.padding)
                                 .background(themeManager.cardBackgroundColor)
                                 .cornerRadius(ThemeManager.cornerRadius)
                         }
@@ -141,6 +134,10 @@ struct EmojiPickerView: View {
 }
 
 #Preview {
-    EnhancedMoodSelectionView(selectedMood: .constant(.happy))
-        .environmentObject(ThemeManager())
+    EnhancedMoodSelectionView(
+        selectedMood: .constant(.happy),
+        selectedIntensity: .constant(5),
+        onSelect: { _, _, _ in }
+    )
+    .environmentObject(ThemeManager())
 } 

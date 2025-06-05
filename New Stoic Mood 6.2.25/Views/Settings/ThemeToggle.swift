@@ -4,25 +4,24 @@ struct ThemeToggle: View {
     @EnvironmentObject private var themeManager: ThemeManager
     
     var body: some View {
-        Button(action: {
-            withAnimation {
-                themeManager.toggleTheme()
+        Button {
+            themeManager.toggleTheme()
+        } label: {
+            HStack {
+                Image(systemName: themeManager.isDarkMode ? "sun.max" : "moon")
+                    .foregroundColor(themeManager.accentColor)
+                
+                Text(themeManager.isDarkMode ? "Light Mode" : "Dark Mode")
+                    .foregroundColor(themeManager.textColor)
+                
+                Spacer()
+                
+                Image(systemName: "chevron.right")
+                    .foregroundColor(themeManager.secondaryTextColor)
             }
-        }) {
-            HStack(spacing: 8) {
-                Image(systemName: themeManager.isDarkMode ? "moon.fill" : "sun.max.fill")
-                Text(themeManager.isDarkMode ? "Dark Mode" : "Light Mode")
-                    .font(.subheadline)
-            }
-            .foregroundColor(themeManager.accentColor)
-            .padding(.horizontal, 16)
-            .padding(.vertical, 8)
+            .padding()
             .background(themeManager.cardBackgroundColor)
-            .cornerRadius(20)
-            .overlay(
-                RoundedRectangle(cornerRadius: 20)
-                    .stroke(themeManager.borderColor, lineWidth: 1)
-            )
+            .cornerRadius(ThemeManager.cornerRadius)
         }
     }
 }
