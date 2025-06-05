@@ -4,105 +4,104 @@ struct MoodSelectionView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var selectedMood: MoodType?
     @State private var selectedIntensity: Int = 5
+    @State private var searchText = ""
+    @State private var selectedCategory: MoodCategory = .positive
     @EnvironmentObject private var themeManager: ThemeManager
     let onMoodSelected: (MoodType, Int) -> Void
     
-    private let moods: [(type: MoodType, emoji: String, label: String)] = [
-        (.happy, "😀", "Happy"),
-        (.grateful, "🙏", "Grateful"),
-        (.focused, "🎯", "Focused"),
-        (.anxious, "😰", "Anxious"),
-        (.frustrated, "😤", "Frustrated"),
-        (.sad, "😞", "Sad"),
-        (.calm, "🧘", "Calm"),
-        (.energetic, "⚡", "Energetic"),
-        (.proud, "🎉", "Proud"),
-        (.reflective, "🥲", "Reflective"),
-        (.stressed, "😵‍💫", "Stressed")
-    ]
+    private var filteredMoods: [Mood] {
+        let categoryMoods = Mood.allCases.filter { $0.category == selectedCategory }
+        if searchText.isEmpty {
+            return categoryMoods
+        }
+        return categoryMoods.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
+    }
     
     var body: some View {
         NavigationView {
-            VStack(spacing: 30) {
-                Text("How are you feeling?")
-                    .font(.title)
-                    .foregroundColor(themeManager.textColor)
+            VStack(spacing: 20) {
+                // Search Bar
+                SearchBar(text: $searchText, placeholder: "Search moods...")
+                    .padding(.horizontal)
                 
-                Text("Select your current mood")
-                    .font(.body)
-                    .foregroundColor(themeManager.secondaryTextColor)
+                // Category Picker
+                Picker("Category", selection: $selectedCategory) {
+                    Text("Positive").tag(MoodCategory.positive)
+                    Text("Neutral").tag(MoodCategory.neutral)
+                    Text("Negative").tag(MoodCategory.negative)
+                }
+                .pickerStyle(.segmented)
+                .padding(.horizontal)
                 
                 // Mood Grid
-                LazyVGrid(columns: [
-                    GridItem(.flexible()),
-                    GridItem(.flexible()),
-                    GridItem(.flexible())
-                ], spacing: 20) {
-                    ForEach(moods, id: \.type) { mood in
-                        VStack {
-                            Text(mood.emoji)
-                                .font(.system(size: 40))
-                            Text(mood.label)
-                                .font(.caption)
-                                .foregroundColor(themeManager.textColor)
-                        }
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(
-                            RoundedRectangle(cornerRadius: ThemeManager.cornerRadius)
-                                .fill(selectedMood == mood.type ? 
-                                    themeManager.accentColor.opacity(0.2) : 
-                                    themeManager.cardBackgroundColor)
-                        )
-                        .overlay(
-                            RoundedRectangle(cornerRadius: ThemeManager.cornerRadius)
-                                .stroke(selectedMood == mood.type ? 
-                                    themeManager.accentColor : 
-                                    themeManager.borderColor, 
-                                    lineWidth: 1)
-                        )
-                        .onTapGesture {
-                            selectedMood = mood.type
+                ScrollView {
+                    LazyVGrid(columns: [
+                        GridItem(.flexible()),
+                        GridItem(.flexible()),
+                        GridItem(.flexible()),
+                        GridItem(.flexible())
+                    ], spacing: 16) {
+                        ForEach(filteredMoods, id: \.self) { mood in
+                            MoodButton(
+                                mood: mood,
+                                isSelected: selectedMood == mood.toMoodType,
+                                action: {
+                                    selectedMood = mood.toMoodType
+                                }
+                            )
                         }
                     }
+                    .padding()
                 }
-                .padding()
                 
-                if let selectedMood = selectedMood {
-                    VStack(spacing: 15) {
-                        Text("Intensity")
-                            .font(.headline)
-                            .foregroundColor(themeManager.textColor)
+                // Intensity Slider
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Intensity")
+                        .font(.headline)
+                        .foregroundColor(themeManager.textColor)
+                    
+                    HStack {
+                        Text("1")
+                            .foregroundColor(themeManager.secondaryTextColor)
                         
                         Slider(value: Binding(
                             get: { Double(selectedIntensity) },
                             set: { selectedIntensity = Int($0) }
                         ), in: 1...10, step: 1)
-                        .tint(themeManager.accentColor)
+                        .accentColor(themeManager.accentColor)
                         
-                        Text("\(selectedIntensity)")
-                            .font(.body)
+                        Text("10")
                             .foregroundColor(themeManager.secondaryTextColor)
                     }
-                    .padding()
                     
-                    Button(action: {
-                        onMoodSelected(selectedMood, selectedIntensity)
-                    }) {
-                        Text("Continue to Journal")
-                            .font(.body)
-                            .foregroundColor(.white)
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(themeManager.accentColor)
-                            .cornerRadius(ThemeManager.cornerRadius)
-                    }
-                    .padding(.horizontal)
+                    Text("Current: \(selectedIntensity)")
+                        .font(.caption)
+                        .foregroundColor(themeManager.secondaryTextColor)
                 }
+                .padding()
+                .background(themeManager.cardBackgroundColor)
+                .cornerRadius(ThemeManager.cornerRadius)
+                .padding(.horizontal)
                 
-                Spacer()
+                // Done Button
+                Button {
+                    if let mood = selectedMood {
+                        onMoodSelected(mood, selectedIntensity)
+                        dismiss()
+                    }
+                } label: {
+                    Text("Done")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(selectedMood != nil ? themeManager.accentColor : themeManager.accentColor.opacity(0.5))
+                        .cornerRadius(ThemeManager.cornerRadius)
+                }
+                .disabled(selectedMood == nil)
+                .padding(.horizontal)
             }
-            .padding()
+            .navigationTitle("Select Mood")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -116,6 +115,6 @@ struct MoodSelectionView: View {
 }
 
 #Preview {
-    MoodSelectionView { _, _ in }
+    MoodSelectionView(onMoodSelected: { _, _ in })
         .environmentObject(ThemeManager())
 } 

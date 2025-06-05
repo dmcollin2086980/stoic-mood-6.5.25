@@ -14,6 +14,7 @@ struct New_Stoic_Mood_6_2_25App: App {
     @StateObject private var exerciseVM = ExerciseViewModel()
     @StateObject private var quoteVM = QuoteViewModel()
     @StateObject private var themeManager = ThemeManager()
+    @State private var showLaunchScreen = true
     
     init() {
         // Initialize any required setup here
@@ -38,50 +39,61 @@ struct New_Stoic_Mood_6_2_25App: App {
     
     var body: some Scene {
         WindowGroup {
-            TabView {
-                NavigationStack {
-                    DashboardView()
-                }
-                .tabItem {
-                    Label("Dashboard", systemImage: "chart.bar.fill")
-                }
-                
-                NavigationStack {
-                    JournalView()
-                }
-                .tabItem {
-                    Label("Journal", systemImage: "book.fill")
-                }
-                
-                NavigationStack {
-                    QuotesContainerView()
-                }
-                .tabItem {
-                    Label("Quotes", systemImage: "quote.bubble.fill")
-                }
-                
-                NavigationStack {
-                    DailyExerciseView()
-                }
-                .tabItem {
-                    Label("Exercises", systemImage: "book.closed")
-                }
-                
-                NavigationStack {
-                    SettingsView()
-                }
-                .tabItem {
-                    Label("Settings", systemImage: "gear")
+            ZStack {
+                if showLaunchScreen {
+                    LaunchScreenView()
+                        .transition(.opacity)
+                        .zIndex(1)
+                } else {
+                    TabView {
+                        NavigationStack {
+                            DashboardView()
+                        }
+                        .tabItem {
+                            Label("Dashboard", systemImage: "chart.bar.fill")
+                        }
+                        NavigationStack {
+                            JournalView()
+                        }
+                        .tabItem {
+                            Label("Journal", systemImage: "book.fill")
+                        }
+                        NavigationStack {
+                            QuotesContainerView()
+                        }
+                        .tabItem {
+                            Label("Quotes", systemImage: "quote.bubble.fill")
+                        }
+                        NavigationStack {
+                            DailyExerciseView()
+                        }
+                        .tabItem {
+                            Label("Exercises", systemImage: "book.closed")
+                        }
+                        NavigationStack {
+                            SettingsView()
+                        }
+                        .tabItem {
+                            Label("Settings", systemImage: "gear")
+                        }
+                    }
+                    .tint(themeManager.accentColor)
+                    .environmentObject(moodVM)
+                    .environmentObject(themeManager)
+                    .environmentObject(reflectionVM)
+                    .environmentObject(exerciseVM)
+                    .environmentObject(quoteVM)
+                    .onAppear {
+                        populateExampleDataIfNeeded()
+                    }
                 }
             }
-            .tint(themeManager.accentColor)
-            .environmentObject(moodVM)
-            .environmentObject(themeManager)
-            .environmentObject(reflectionVM)
-            .environmentObject(exerciseVM)
-            .environmentObject(quoteVM)
             .onAppear {
-                populateExampleDataIfNeeded()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                    withAnimation {
+                        showLaunchScreen = false
+                    }
+                }
             }
         }
     }

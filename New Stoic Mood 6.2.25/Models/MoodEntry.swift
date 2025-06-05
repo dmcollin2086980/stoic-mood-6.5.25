@@ -1,21 +1,39 @@
 import Foundation
 
 struct MoodEntry: Identifiable, Codable {
-    let id: Date
-    let mood: MoodType
-    let content: String
+    let id: UUID
+    let mood: Mood
+    let intensity: Int // 1-5 scale
     let timestamp: Date
-    let wordCount: Int
-    var isQuickEntry: Bool
+    let journalEntry: String?
     
-    init(id: Date = Date(), mood: MoodType, content: String, timestamp: Date = Date(), wordCount: Int? = nil, isQuickEntry: Bool = false) {
+    init(id: UUID = UUID(), mood: Mood, intensity: Int = 3, timestamp: Date = Date(), journalEntry: String? = nil) {
         self.id = id
         self.mood = mood
-        self.content = content
+        self.intensity = max(1, min(5, intensity)) // Ensure intensity is between 1 and 5
         self.timestamp = timestamp
-        self.wordCount = wordCount ?? content.split(separator: " ").count
-        self.isQuickEntry = isQuickEntry
+        self.journalEntry = journalEntry
     }
+    
+    var formattedDate: String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .short
+        return formatter.string(from: timestamp)
+    }
+    
+    var formattedIntensity: String {
+        return String(repeating: "⭐️", count: intensity)
+    }
+}
+
+// MARK: - Sample Data
+extension MoodEntry {
+    static let sampleEntries: [MoodEntry] = [
+        MoodEntry(mood: .happy, intensity: 4, timestamp: Date().addingTimeInterval(-86400), journalEntry: "Had a great day at work!"),
+        MoodEntry(mood: .calm, intensity: 3, timestamp: Date().addingTimeInterval(-172800), journalEntry: "Meditation session was very peaceful."),
+        MoodEntry(mood: .grateful, intensity: 5, timestamp: Date().addingTimeInterval(-259200), journalEntry: "Feeling thankful for my family and friends.")
+    ]
 }
 
 enum MoodType: String, Codable, CaseIterable {

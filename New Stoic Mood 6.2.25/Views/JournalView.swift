@@ -66,7 +66,7 @@ struct JournalView: View {
                 
                 VStack(spacing: themeManager.spacing) {
                     // Search bar
-                    SearchBar(text: $searchText)
+                    SearchBar(text: $searchText, placeholder: "Search journal entries...")
                         .padding(.horizontal)
                     
                     // Filter buttons

@@ -5,69 +5,9 @@ struct InsightsView: View {
     @EnvironmentObject var viewModel: MoodViewModel
     @EnvironmentObject private var themeManager: ThemeManager
     
-    private var averageMood: Double {
-        guard !viewModel.entries.isEmpty else { return 0 }
-        let sum = viewModel.entries.reduce(into: 0) { result, entry in
-            result += entry.intensity
-        }
-        return sum / Double(viewModel.entries.count)
-    }
-    
     var body: some View {
         ScrollView {
-            VStack(spacing: themeManager.spacing) {
-                // Mood Trends Section
-                VStack(alignment: .leading, spacing: themeManager.spacing) {
-                    Text("Mood Trends")
-                        .font(.headline)
-                        .foregroundColor(themeManager.textColor)
-                    
-                    Chart(viewModel.moodFlowData) { point in
-                        LineMark(
-                            x: .value("Date", point.date),
-                            y: .value("Mood", point.value)
-                        )
-                        .foregroundStyle(themeManager.accentColor)
-                        
-                        PointMark(
-                            x: .value("Date", point.date),
-                            y: .value("Mood", point.value)
-                        )
-                        .foregroundStyle(themeManager.accentColor)
-                    }
-                    .frame(height: 200)
-                    .chartYScale(domain: 0...10)
-                }
-                .padding(themeManager.padding)
-                .background(themeManager.cardBackgroundColor)
-                .cornerRadius(ThemeManager.cornerRadius)
-                .shadow(color: Color.black.opacity(themeManager.shadowOpacity), radius: themeManager.shadowRadius, x: 0, y: 2)
-                
-                // Weekly Summary Section
-                VStack(alignment: .leading, spacing: themeManager.spacing) {
-                    Text("Weekly Summary")
-                        .font(.headline)
-                        .foregroundColor(themeManager.textColor)
-                    
-                    HStack(spacing: themeManager.spacing) {
-                        StatBox(
-                            title: "Average Mood",
-                            value: String(format: "%.1f", averageMood),
-                            themeManager: themeManager
-                        )
-                        
-                        StatBox(
-                            title: "Entries",
-                            value: "\(viewModel.entries.count)",
-                            themeManager: themeManager
-                        )
-                    }
-                }
-                .padding(themeManager.padding)
-                .background(themeManager.cardBackgroundColor)
-                .cornerRadius(ThemeManager.cornerRadius)
-                .shadow(color: Color.black.opacity(themeManager.shadowOpacity), radius: themeManager.shadowRadius, x: 0, y: 2)
-                
+            VStack(spacing: 20) {
                 // Mood Distribution Section
                 VStack(alignment: .leading, spacing: themeManager.spacing) {
                     Text("Mood Distribution")
@@ -75,14 +15,14 @@ struct InsightsView: View {
                         .foregroundColor(themeManager.textColor)
                     
                     ForEach(Mood.allCases, id: \.self) { mood in
-                        let count = viewModel.entries.filter { $0.mood == mood }.count
-                        let percentage = viewModel.entries.isEmpty ? 0 : Double(count) / Double(viewModel.entries.count) * 100
+                        let count = viewModel.moodEntries.filter { $0.mood == mood }.count
+                        let percentage = viewModel.moodEntries.isEmpty ? 0 : Double(count) / Double(viewModel.moodEntries.count) * 100
                         
                         HStack {
                             Text(mood.emoji)
                                 .font(.title2)
                             
-                            Text(mood.rawValue)
+                            Text(mood.name)
                                 .foregroundColor(themeManager.textColor)
                             
                             Spacer()
@@ -99,33 +39,99 @@ struct InsightsView: View {
                 .background(themeManager.cardBackgroundColor)
                 .cornerRadius(ThemeManager.cornerRadius)
                 .shadow(color: Color.black.opacity(themeManager.shadowOpacity), radius: themeManager.shadowRadius, x: 0, y: 2)
+                
+                // Text Analysis Section
+                if let analysis = viewModel.textAnalysis {
+                    VStack(alignment: .leading, spacing: themeManager.spacing) {
+                        Text("Journal Analysis")
+                            .font(.headline)
+                            .foregroundColor(themeManager.textColor)
+                        
+                        VStack(alignment: .leading, spacing: 8) {
+                            StatRow(title: "Average Length", value: "\(analysis.averageLength) words")
+                            StatRow(title: "Writing Style", value: analysis.writingStyle)
+                            StatRow(title: "Sentiment", value: formatSentiment(analysis.sentiment))
+                            StatRow(title: "Common Themes", value: analysis.themes.joined(separator: ", "))
+                        }
+                    }
+                    .padding(themeManager.padding)
+                    .background(themeManager.cardBackgroundColor)
+                    .cornerRadius(ThemeManager.cornerRadius)
+                }
+                
+                // Mood Transitions Section
+                if let transitions = viewModel.moodTransitions {
+                    VStack(alignment: .leading, spacing: themeManager.spacing) {
+                        Text("Mood Transitions")
+                            .font(.headline)
+                            .foregroundColor(themeManager.textColor)
+                        
+                        ForEach(transitions) { transition in
+                            HStack {
+                                Text("\(transition.from.emoji) → \(transition.to.emoji)")
+                                    .font(.title2)
+                                Spacer()
+                                Text("\(transition.count) times")
+                                    .foregroundColor(themeManager.secondaryTextColor)
+                            }
+                            .padding(themeManager.padding)
+                            .background(themeManager.cardBackgroundColor)
+                            .cornerRadius(ThemeManager.cornerRadius)
+                        }
+                    }
+                    .padding(themeManager.padding)
+                    .background(themeManager.cardBackgroundColor)
+                    .cornerRadius(ThemeManager.cornerRadius)
+                }
+                
+                // Time Patterns Section
+                if !viewModel.timePatterns.isEmpty {
+                    VStack(alignment: .leading, spacing: themeManager.spacing) {
+                        Text("Time Patterns")
+                            .font(.headline)
+                            .foregroundColor(themeManager.textColor)
+                        
+                        ForEach(viewModel.timePatterns) { pattern in
+                            HStack {
+                                Image(systemName: pattern.icon)
+                                    .font(.title2)
+                                VStack(alignment: .leading) {
+                                    Text(pattern.title)
+                                        .foregroundColor(themeManager.textColor)
+                                    Text(pattern.description)
+                                        .font(.caption)
+                                        .foregroundColor(themeManager.secondaryTextColor)
+                                }
+                                Spacer()
+                            }
+                            .padding(themeManager.padding)
+                            .background(themeManager.cardBackgroundColor)
+                            .cornerRadius(ThemeManager.cornerRadius)
+                        }
+                    }
+                    .padding(themeManager.padding)
+                    .background(themeManager.cardBackgroundColor)
+                    .cornerRadius(ThemeManager.cornerRadius)
+                }
             }
             .padding()
         }
         .navigationTitle("Insights")
     }
-}
-
-struct StatBox: View {
-    let title: String
-    let value: String
-    let themeManager: ThemeManager
     
-    var body: some View {
-        VStack(spacing: 8) {
-            Text(title)
-                .font(.caption)
-                .foregroundColor(themeManager.secondaryTextColor)
-            
-            Text(value)
-                .font(.title2)
-                .fontWeight(.bold)
-                .foregroundColor(themeManager.textColor)
+    private func formatSentiment(_ score: Double) -> String {
+        switch score {
+        case 0.7...:
+            return "Very Positive"
+        case 0.5..<0.7:
+            return "Moderately Positive"
+        case 0.3..<0.5:
+            return "Neutral"
+        case 0.1..<0.3:
+            return "Moderately Negative"
+        default:
+            return "Very Negative"
         }
-        .frame(maxWidth: .infinity)
-        .padding(themeManager.padding)
-        .background(themeManager.cardBackgroundColor)
-        .cornerRadius(ThemeManager.cornerRadius)
     }
 }
 

@@ -112,7 +112,7 @@ class ExampleDataManager: ObservableObject {
             
             // Clear existing data first
             DispatchQueue.main.async {
-                moodVM.clearAll()
+                moodVM.moodEntries.removeAll()
                 reflectionVM.clearAll()
                 exerciseVM.clearAll()
                 quoteVM.clearAll()
@@ -130,7 +130,7 @@ class ExampleDataManager: ObservableObject {
             // Verify data population
             DispatchQueue.main.async {
                 print("Data population completed")
-                print("Mood entries: \(moodVM.entries.count)")
+                print("Mood entries: \(moodVM.moodEntries.count)")
                 print("Reflections: \(reflectionVM.reflections.count)")
                 print("Exercises: \(exerciseVM.exercises.count)")
                 print("Saved quotes: \(quoteVM.savedQuotes.count)")
@@ -148,7 +148,7 @@ class ExampleDataManager: ObservableObject {
         exerciseVM: ExerciseViewModel,
         quoteVM: QuoteViewModel
     ) {
-        moodVM.clearAll()
+        moodVM.moodEntries.removeAll()
         reflectionVM.clearAll()
         exerciseVM.clearAll()
         quoteVM.clearAll()
@@ -171,7 +171,14 @@ class ExampleDataManager: ObservableObject {
             let journal = generateJournalEntry(for: date, mood: mood, intensity: intensity)
             
             DispatchQueue.main.async {
-                moodVM.addEntry(date: date, mood: mood, intensity: intensity, journal: journal)
+                let entry = MoodEntry(
+                    id: UUID(),
+                    mood: Mood.allCases.randomElement()!,
+                    intensity: intensity,
+                    timestamp: date,
+                    journalEntry: journal
+                )
+                moodVM.moodEntries.append(entry)
                 self.progress = Double(i) / Double(totalDays) * 0.25
             }
         }

@@ -8,109 +8,107 @@ struct DailyExerciseView: View {
     @State private var showingSaveAlert = false
     
     var body: some View {
-        NavigationView {
-            ZStack {
-                themeManager.backgroundColor.ignoresSafeArea()
-                
-                ScrollView {
+        ZStack {
+            themeManager.backgroundColor.ignoresSafeArea()
+            
+            ScrollView {
+                VStack(spacing: themeManager.spacing) {
+                    // Header with Quote
                     VStack(spacing: themeManager.spacing) {
-                        // Header with Quote
-                        VStack(spacing: themeManager.spacing) {
-                            Text(viewModel.currentExercise.quote)
-                                .font(.title)
-                                .foregroundColor(themeManager.textColor)
-                                .multilineTextAlignment(.center)
-                                .padding()
-                                .background(themeManager.cardBackgroundColor)
-                                .cornerRadius(ThemeManager.cornerRadius)
-                                .accessibilityLabel("Daily Stoic Quote")
-                        }
+                        Text(viewModel.currentExercise.quote)
+                            .font(.title)
+                            .foregroundColor(themeManager.textColor)
+                            .multilineTextAlignment(.center)
+                            .padding()
+                            .background(themeManager.cardBackgroundColor)
+                            .cornerRadius(ThemeManager.cornerRadius)
+                            .accessibilityLabel("Daily Stoic Quote")
+                    }
+                    
+                    // Exercise Content
+                    VStack(alignment: .leading, spacing: themeManager.spacing) {
+                        Text("Today's Exercise")
+                            .font(.headline)
+                            .foregroundColor(themeManager.textColor)
                         
-                        // Exercise Content
-                        VStack(alignment: .leading, spacing: themeManager.spacing) {
-                            Text("Today's Exercise")
-                                .font(.headline)
-                                .foregroundColor(themeManager.textColor)
-                            
-                            Text(viewModel.currentExercise.exercise)
-                                .font(.body)
-                                .foregroundColor(themeManager.secondaryTextColor)
-                                .padding()
-                                .background(themeManager.cardBackgroundColor)
-                                .cornerRadius(ThemeManager.cornerRadius)
-                                .accessibilityLabel("Exercise Description")
-                        }
+                        Text(viewModel.currentExercise.exercise)
+                            .font(.body)
+                            .foregroundColor(themeManager.secondaryTextColor)
+                            .padding()
+                            .background(themeManager.cardBackgroundColor)
+                            .cornerRadius(ThemeManager.cornerRadius)
+                            .accessibilityLabel("Exercise Description")
+                    }
+                    
+                    // Action Steps
+                    VStack(alignment: .leading, spacing: themeManager.spacing) {
+                        Text("Action Steps")
+                            .font(.headline)
+                            .foregroundColor(themeManager.textColor)
                         
-                        // Action Steps
-                        VStack(alignment: .leading, spacing: themeManager.spacing) {
-                            Text("Action Steps")
-                                .font(.headline)
-                                .foregroundColor(themeManager.textColor)
-                            
-                            ForEach(viewModel.currentExercise.steps, id: \.self) { step in
-                                HStack(alignment: .top, spacing: 12) {
-                                    Image(systemName: "circle.fill")
-                                        .font(.system(size: 8))
-                                        .foregroundColor(themeManager.accentColor)
-                                        .padding(.top, 6)
-                                    
-                                    Text(step)
-                                        .font(.body)
-                                        .foregroundColor(themeManager.secondaryTextColor)
-                                }
-                            }
-                        }
-                        .padding()
-                        .background(themeManager.cardBackgroundColor)
-                        .cornerRadius(ThemeManager.cornerRadius)
-                        .accessibilityLabel("Exercise Steps")
-                        
-                        // Reflection Section
-                        if viewModel.isExerciseComplete {
-                            ExerciseReflectionView(viewModel: viewModel, showingSaveAlert: $showingSaveAlert)
-                        }
-                        
-                        // Complete Button
-                        if !viewModel.isExerciseComplete {
-                            Button {
-                                withAnimation {
-                                    viewModel.completeExercise()
-                                }
-                            } label: {
-                                Text("Complete Exercise")
+                        ForEach(viewModel.currentExercise.steps, id: \.self) { step in
+                            HStack(alignment: .top, spacing: 12) {
+                                Image(systemName: "circle.fill")
+                                    .font(.system(size: 8))
+                                    .foregroundColor(themeManager.accentColor)
+                                    .padding(.top, 6)
+                                
+                                Text(step)
                                     .font(.body)
-                                    .foregroundColor(.white)
-                                    .frame(maxWidth: .infinity)
-                                    .padding()
-                                    .background(themeManager.accentColor)
-                                    .cornerRadius(ThemeManager.cornerRadius)
+                                    .foregroundColor(themeManager.secondaryTextColor)
                             }
-                            .accessibilityLabel("Complete Exercise")
                         }
                     }
                     .padding()
-                }
-            }
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    NavigationLink(destination: ExerciseHistoryView()) {
-                        HStack {
-                            Image(systemName: "clock.arrow.circlepath")
-                            Text("History")
+                    .background(themeManager.cardBackgroundColor)
+                    .cornerRadius(ThemeManager.cornerRadius)
+                    .accessibilityLabel("Exercise Steps")
+                    
+                    // Reflection Section
+                    if viewModel.isExerciseComplete {
+                        ExerciseReflectionView(viewModel: viewModel, showingSaveAlert: $showingSaveAlert)
+                    }
+                    
+                    // Complete Button
+                    if !viewModel.isExerciseComplete {
+                        Button {
+                            withAnimation {
+                                viewModel.completeExercise()
+                            }
+                        } label: {
+                            Text("Complete Exercise")
+                                .font(.body)
+                                .foregroundColor(.white)
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(themeManager.accentColor)
+                                .cornerRadius(ThemeManager.cornerRadius)
                         }
-                        .foregroundColor(themeManager.accentColor)
+                        .accessibilityLabel("Complete Exercise")
                     }
                 }
+                .padding()
             }
-            .alert("Reflection Saved", isPresented: $showingSaveAlert) {
-                Button("OK", role: .cancel) { }
-            } message: {
-                Text("Your reflection has been saved successfully.")
+        }
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                NavigationLink(destination: ExerciseHistoryView()) {
+                    HStack {
+                        Image(systemName: "clock.arrow.circlepath")
+                        Text("History")
+                    }
+                    .foregroundColor(themeManager.accentColor)
+                }
             }
-            .onTapGesture {
-                UIApplication.shared.endEditing()
-            }
+        }
+        .alert("Reflection Saved", isPresented: $showingSaveAlert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text("Your reflection has been saved successfully.")
+        }
+        .onTapGesture {
+            UIApplication.shared.endEditing()
         }
     }
 }

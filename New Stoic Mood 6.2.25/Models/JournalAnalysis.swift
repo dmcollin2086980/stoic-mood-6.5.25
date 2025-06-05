@@ -9,7 +9,7 @@ struct JournalAnalysis {
     let wordCount: Int
     
     static func analyze(entries: [MoodEntry]) -> JournalAnalysis {
-        let allText = entries.map { $0.content }.joined(separator: " ")
+        let allText = entries.compactMap { $0.journalEntry }.joined(separator: " ")
         let words = allText.split { !$0.isLetter }.map { String($0).lowercased() }
         let wordCounts = words.reduce(into: [:]) { counts, word in counts[word, default: 0] += 1 }
         
@@ -21,7 +21,7 @@ struct JournalAnalysis {
         let topWords = Array(sortedWords.prefix(10))
         
         // Calculate average length
-        let totalWords = entries.reduce(0) { $0 + $1.wordCount }
+        let totalWords = entries.compactMap { $0.journalEntry }.reduce(0) { $0 + $1.split { !$0.isLetter }.count }
         let averageLength = entries.isEmpty ? 0 : totalWords / entries.count
         
         // Determine writing style
@@ -46,9 +46,12 @@ struct JournalAnalysis {
     private static func determineWritingStyle(entries: [MoodEntry]) -> String {
         guard !entries.isEmpty else { return "Not enough data" }
         
-        let avgLength = entries.reduce(0) { $0 + $1.wordCount } / entries.count
-        let hasQuestions = entries.contains { $0.content.contains("?") }
-        let hasExclamations = entries.contains { $0.content.contains("!") }
+        let entriesWithJournal = entries.compactMap { $0.journalEntry }
+        guard !entriesWithJournal.isEmpty else { return "No journal entries" }
+        
+        let avgLength = entriesWithJournal.reduce(0) { $0 + $1.split { !$0.isLetter }.count } / entriesWithJournal.count
+        let hasQuestions = entriesWithJournal.contains { $0.contains("?") }
+        let hasExclamations = entriesWithJournal.contains { $0.contains("!") }
         
         switch (avgLength, hasQuestions, hasExclamations) {
         case (..<50, _, _):
@@ -74,7 +77,8 @@ struct JournalAnalysis {
         var negativeCount = 0
         
         for entry in entries {
-            let words = entry.content.lowercased().split { !$0.isLetter }.map { String($0) }
+            guard let journal = entry.journalEntry else { continue }
+            let words = journal.lowercased().split { !$0.isLetter }.map { String($0) }
             positiveCount += words.filter { positiveWords.contains($0) }.count
             negativeCount += words.filter { negativeWords.contains($0) }.count
         }
@@ -100,7 +104,8 @@ struct JournalAnalysis {
         var themeCounts: [String: Int] = [:]
         
         for entry in entries {
-            let words = entry.content.lowercased().split { !$0.isLetter }.map { String($0) }
+            guard let journal = entry.journalEntry else { continue }
+            let words = journal.lowercased().split { !$0.isLetter }.map { String($0) }
             
             for (theme, keywords) in themes {
                 let count = words.filter { keywords.contains($0) }.count

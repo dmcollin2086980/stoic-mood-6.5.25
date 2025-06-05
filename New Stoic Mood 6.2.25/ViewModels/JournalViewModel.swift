@@ -3,53 +3,56 @@ import SwiftUI
 
 class JournalViewModel: ObservableObject {
     @Published var entries: [MoodEntry] = []
+    private let saveKey = "journalEntries"
     
     init() {
-        // Load saved entries or initialize with empty array
         loadEntries()
     }
     
-    func addEntry(mood: MoodType, intensity: Int, content: String = "") {
-        let now = Date()
+    func addEntry(mood: Mood, intensity: Int, content: String = "") {
         let entry = MoodEntry(
-            id: now,
             mood: mood,
-            content: content,
-            timestamp: now,
-            wordCount: content.split(separator: " ").count,
-            isQuickEntry: false
+            intensity: intensity,
+            journalEntry: content.isEmpty ? nil : content
         )
         entries.insert(entry, at: 0)
         saveEntries()
     }
     
     private func loadEntries() {
-        // TODO: Implement loading from persistent storage
-        // For now, using sample data
-        let now = Date()
-        let yesterday = now.addingTimeInterval(-86400)
-        
-        entries = [
-            MoodEntry(
-                id: now,
-                mood: .calm,
-                content: "Feeling balanced and at peace today. The morning meditation helped set a positive tone.",
-                timestamp: now,
-                wordCount: 15,
-                isQuickEntry: false
-            ),
-            MoodEntry(
-                id: yesterday,
-                mood: .focused,
-                content: "Productive day at work. Managed to complete several important tasks.",
-                timestamp: yesterday,
-                wordCount: 10,
-                isQuickEntry: false
-            )
-        ]
+        if let data = UserDefaults.standard.data(forKey: saveKey),
+           let decoded = try? JSONDecoder().decode([MoodEntry].self, from: data) {
+            entries = decoded
+        } else {
+            // Load sample data if no saved entries exist
+            entries = MoodEntry.sampleEntries
+        }
     }
     
     private func saveEntries() {
-        // TODO: Implement saving to persistent storage
+        if let encoded = try? JSONEncoder().encode(entries) {
+            UserDefaults.standard.set(encoded, forKey: saveKey)
+        }
+    }
+    
+    func deleteEntry(_ entry: MoodEntry) {
+        if let index = entries.firstIndex(where: { $0.id == entry.id }) {
+            entries.remove(at: index)
+            saveEntries()
+        }
+    }
+    
+    func updateEntry(_ entry: MoodEntry, newMood: Mood? = nil, newIntensity: Int? = nil, newContent: String? = nil) {
+        if let index = entries.firstIndex(where: { $0.id == entry.id }) {
+            let updatedEntry = MoodEntry(
+                id: entry.id,
+                mood: newMood ?? entry.mood,
+                intensity: newIntensity ?? entry.intensity,
+                timestamp: entry.timestamp,
+                journalEntry: newContent ?? entry.journalEntry
+            )
+            entries[index] = updatedEntry
+            saveEntries()
+        }
     }
 } 
