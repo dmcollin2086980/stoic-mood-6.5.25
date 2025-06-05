@@ -1,14 +1,14 @@
 import SwiftUI
 
 struct QuoteOfTheDayView: View {
-    @ObservedObject var viewModel: QuoteViewModel
+    @EnvironmentObject private var quoteVM: QuoteViewModel
     @EnvironmentObject private var themeManager: ThemeManager
     @State private var isAnimating = false
     
     var body: some View {
         VStack(spacing: 20) {
             // Quote Card
-            QuoteCard(quote: viewModel.dailyQuote)
+            QuoteCard(quote: quoteVM.dailyQuote)
                 .padding(.horizontal)
                 .scaleEffect(isAnimating ? 1.05 : 1.0)
                 .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isAnimating)
@@ -18,21 +18,21 @@ struct QuoteOfTheDayView: View {
                 ActionButton(
                     icon: "bookmark",
                     label: "Save",
-                    action: { viewModel.saveQuote(viewModel.dailyQuote) }
+                    action: { quoteVM.saveQuote(quoteVM.dailyQuote) }
                 )
                 
                 ActionButton(
                     icon: "square.and.arrow.up",
                     label: "Share",
-                    action: { viewModel.shareQuote(viewModel.dailyQuote) }
+                    action: { quoteVM.shareQuote(quoteVM.dailyQuote) }
                 )
             }
             .padding(.horizontal)
         }
         .padding(.vertical)
         .background(themeManager.backgroundColor)
-        .sheet(isPresented: $viewModel.isShareSheetPresented) {
-            ShareSheet(activityItems: [viewModel.shareText])
+        .sheet(isPresented: $quoteVM.isShareSheetPresented) {
+            ShareSheet(activityItems: [quoteVM.shareText])
         }
     }
 }
@@ -61,6 +61,7 @@ private struct ActionButton: View {
 }
 
 #Preview {
-    QuoteOfTheDayView(viewModel: QuoteViewModel())
+    QuoteOfTheDayView()
         .environmentObject(ThemeManager())
+        .environmentObject(QuoteViewModel())
 } 

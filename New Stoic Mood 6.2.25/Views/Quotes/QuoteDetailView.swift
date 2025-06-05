@@ -2,7 +2,7 @@ import SwiftUI
 
 struct QuoteDetailView: View {
     let quote: StoicQuote
-    @ObservedObject var viewModel: QuoteViewModel
+    @EnvironmentObject private var quoteVM: QuoteViewModel
     @EnvironmentObject private var themeManager: ThemeManager
     @Environment(\.dismiss) private var dismiss
     
@@ -18,19 +18,19 @@ struct QuoteDetailView: View {
                     ActionButton(
                         icon: "bookmark",
                         label: "Save",
-                        action: { viewModel.saveQuote(quote) }
+                        action: { quoteVM.saveQuote(quote) }
                     )
                     
                     ActionButton(
                         icon: "square.and.arrow.up",
                         label: "Share",
-                        action: { viewModel.shareQuote(quote) }
+                        action: { quoteVM.shareQuote(quote) }
                     )
                     
                     ActionButton(
                         icon: "text.quote",
                         label: "Copy",
-                        action: { viewModel.copyQuote(quote) }
+                        action: { quoteVM.copyQuote(quote) }
                     )
                 }
                 .padding()
@@ -63,8 +63,8 @@ struct QuoteDetailView: View {
                 }
             }
         }
-        .sheet(isPresented: $viewModel.isShareSheetPresented) {
-            ShareSheet(activityItems: [viewModel.shareText])
+        .sheet(isPresented: $quoteVM.isShareSheetPresented) {
+            ShareSheet(activityItems: [quoteVM.shareText])
         }
     }
 }
@@ -108,9 +108,9 @@ struct ShareSheet: UIViewControllerRepresentable {
             quote: StoicQuote(
                 text: "The happiness of your life depends upon the quality of your thoughts.",
                 author: "Marcus Aurelius"
-            ),
-            viewModel: QuoteViewModel()
+            )
         )
         .environmentObject(ThemeManager())
+        .environmentObject(QuoteViewModel())
     }
 } 

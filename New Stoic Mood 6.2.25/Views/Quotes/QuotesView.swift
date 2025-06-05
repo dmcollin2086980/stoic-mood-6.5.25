@@ -1,8 +1,8 @@
 import SwiftUI
 
 struct QuotesView: View {
-    @ObservedObject var viewModel: QuoteViewModel
     @EnvironmentObject private var themeManager: ThemeManager
+    @EnvironmentObject private var quoteVM: QuoteViewModel
     @State private var selectedQuote: StoicQuote?
     
     var body: some View {
@@ -12,7 +12,7 @@ struct QuotesView: View {
                 
                 List {
                     Section {
-                        NavigationLink(destination: QuoteOfTheDayView(viewModel: viewModel)) {
+                        NavigationLink(destination: QuoteOfTheDayView()) {
                             HStack {
                                 Image(systemName: "sun.max.fill")
                                     .foregroundColor(.yellow)
@@ -25,12 +25,12 @@ struct QuotesView: View {
                     }
                     
                     Section("Saved Quotes") {
-                        if viewModel.savedQuotes.isEmpty {
+                        if quoteVM.savedQuotes.isEmpty {
                             Text("No saved quotes yet")
                                 .foregroundColor(themeManager.secondaryTextColor)
                                 .italic()
                         } else {
-                            ForEach(viewModel.savedQuotes) { quote in
+                            ForEach(quoteVM.savedQuotes) { quote in
                                 Button(action: { selectedQuote = quote }) {
                                     VStack(alignment: .leading, spacing: 8) {
                                         Text(quote.text)
@@ -44,7 +44,7 @@ struct QuotesView: View {
                             }
                             .onDelete { indexSet in
                                 for index in indexSet {
-                                    viewModel.removeSavedQuote(viewModel.savedQuotes[index])
+                                    quoteVM.removeSavedQuote(quoteVM.savedQuotes[index])
                                 }
                             }
                         }
@@ -54,7 +54,7 @@ struct QuotesView: View {
             }
             .sheet(item: $selectedQuote) { quote in
                 NavigationView {
-                    QuoteDetailView(quote: quote, viewModel: viewModel)
+                    QuoteDetailView(quote: quote)
                 }
             }
         }
@@ -62,6 +62,7 @@ struct QuotesView: View {
 }
 
 #Preview {
-    QuotesView(viewModel: QuoteViewModel())
+    QuotesView()
         .environmentObject(ThemeManager())
+        .environmentObject(QuoteViewModel())
 } 

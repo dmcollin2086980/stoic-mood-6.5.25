@@ -1,18 +1,18 @@
 import SwiftUI
 
 struct SavedQuotesView: View {
-    @ObservedObject var viewModel: QuoteViewModel
+    @EnvironmentObject private var quoteVM: QuoteViewModel
     @EnvironmentObject private var themeManager: ThemeManager
     @State private var selectedQuote: StoicQuote?
     
     var body: some View {
         List {
-            if viewModel.savedQuotes.isEmpty {
+            if quoteVM.savedQuotes.isEmpty {
                 Text("No saved quotes yet")
                     .foregroundColor(themeManager.secondaryTextColor)
                     .italic()
             } else {
-                ForEach(viewModel.savedQuotes) { quote in
+                ForEach(quoteVM.savedQuotes) { quote in
                     QuoteCard(quote: quote)
                         .listRowInsets(EdgeInsets())
                         .listRowBackground(Color.clear)
@@ -22,7 +22,7 @@ struct SavedQuotesView: View {
                         }
                         .swipeActions {
                             Button(role: .destructive) {
-                                viewModel.removeSavedQuote(quote)
+                                quoteVM.removeSavedQuote(quote)
                             } label: {
                                 Label("Remove", systemImage: "trash")
                             }
@@ -34,7 +34,7 @@ struct SavedQuotesView: View {
         .background(themeManager.backgroundColor)
         .sheet(item: $selectedQuote) { quote in
             NavigationStack {
-                QuoteDetailView(quote: quote, viewModel: viewModel)
+                QuoteDetailView(quote: quote)
             }
         }
     }
@@ -42,7 +42,8 @@ struct SavedQuotesView: View {
 
 #Preview {
     NavigationStack {
-        SavedQuotesView(viewModel: QuoteViewModel())
+        SavedQuotesView()
             .environmentObject(ThemeManager())
+            .environmentObject(QuoteViewModel())
     }
 } 

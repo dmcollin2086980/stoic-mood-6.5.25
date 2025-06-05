@@ -1,13 +1,13 @@
 import SwiftUI
 
 struct QuoteListView: View {
-    @ObservedObject var viewModel: QuoteViewModel
+    @EnvironmentObject private var quoteVM: QuoteViewModel
     @EnvironmentObject private var themeManager: ThemeManager
     @State private var selectedQuote: StoicQuote?
     
     var body: some View {
         List {
-            ForEach(viewModel.quotes) { quote in
+            ForEach(quoteVM.quotes) { quote in
                 QuoteCard(quote: quote)
                     .listRowInsets(EdgeInsets())
                     .listRowBackground(Color.clear)
@@ -17,7 +17,7 @@ struct QuoteListView: View {
                     }
                     .swipeActions {
                         Button {
-                            viewModel.saveQuote(quote)
+                            quoteVM.saveQuote(quote)
                         } label: {
                             Label("Save", systemImage: "bookmark")
                         }
@@ -29,7 +29,7 @@ struct QuoteListView: View {
         .background(themeManager.backgroundColor)
         .sheet(item: $selectedQuote) { quote in
             NavigationStack {
-                QuoteDetailView(quote: quote, viewModel: viewModel)
+                QuoteDetailView(quote: quote)
             }
         }
     }
@@ -37,7 +37,8 @@ struct QuoteListView: View {
 
 #Preview {
     NavigationStack {
-        QuoteListView(viewModel: QuoteViewModel())
+        QuoteListView()
             .environmentObject(ThemeManager())
+            .environmentObject(QuoteViewModel())
     }
 } 

@@ -1,61 +1,75 @@
 import SwiftUI
 
-enum Tab {
-    case dashboard
-    case journal
-    case quotes
-    case exercise
-    case settings
-}
-
 struct MainView: View {
-    @EnvironmentObject var viewModel: MoodViewModel
-    @EnvironmentObject var themeManager: ThemeManager
-    @State private var selectedTab: Tab = .dashboard
+    @EnvironmentObject private var themeManager: ThemeManager
+    @EnvironmentObject private var moodVM: MoodViewModel
+    @State private var selectedTab = 0
     
     var body: some View {
         TabView(selection: $selectedTab) {
-            DashboardView()
-                .tabItem {
-                    Label("Dashboard", systemImage: "chart.bar.fill")
-                }
-                .tag(Tab.dashboard)
-            
-            JournalView()
-                .tabItem {
-                    Label("Journal", systemImage: "book.fill")
-                }
-                .tag(Tab.journal)
-            
-            QuotesView(viewModel: QuoteViewModel())
-                .tabItem {
-                    Label("Quotes", systemImage: "quote.bubble.fill")
-                }
-                .tag(Tab.quotes)
-            
-            DailyExerciseView()
-                .tabItem {
-                    Label("Exercise", systemImage: "figure.walk")
-                }
-                .tag(Tab.exercise)
-            
-            SettingsView()
-                .tabItem {
-                    Label("Settings", systemImage: "gear")
-                }
-                .tag(Tab.settings)
-        }
-        .tint(themeManager.accentColor)
-        .onChange(of: selectedTab) { oldValue, newValue in
-            withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
-                // This creates a subtle bounce effect when switching tabs
+            NavigationView {
+                DashboardView()
             }
+            .tabItem {
+                Label("Dashboard", systemImage: "house")
+            }
+            .tag(0)
+            
+            NavigationView {
+                MoodSelectionView { moodType, intensity in
+                    let mood = moodType.toMood
+                    let clampedIntensity = max(1, min(5, intensity))
+                    let newEntry = MoodEntry(mood: mood, intensity: clampedIntensity, timestamp: Date(), journalEntry: nil)
+                    moodVM.moodEntries.insert(newEntry, at: 0)
+                    moodVM.saveMoodEntries()
+                    // Optionally: show a success message or navigate
+                }
+            }
+            .tabItem {
+                Label("Mood", systemImage: "face.smiling")
+            }
+            .tag(1)
+            
+            NavigationView {
+                DailyExerciseView()
+            }
+            .tabItem {
+                Label("Exercise", systemImage: "figure.walk")
+            }
+            .tag(2)
+            
+            NavigationView {
+                QuotesContainerView()
+            }
+            .tabItem {
+                Label("Quotes", systemImage: "quote.bubble")
+            }
+            .tag(3)
+            
+            NavigationView {
+                JournalView()
+            }
+            .tabItem {
+                Label("Journal", systemImage: "book")
+            }
+            .tag(4)
+            
+            NavigationView {
+                SettingsView()
+            }
+            .tabItem {
+                Label("Settings", systemImage: "gear")
+            }
+            .tag(5)
         }
+        .accentColor(themeManager.accentColor)
     }
 }
 
 #Preview {
     MainView()
-        .environmentObject(MoodViewModel())
         .environmentObject(ThemeManager())
+        .environmentObject(MoodViewModel())
+        .environmentObject(ExerciseViewModel())
+        .environmentObject(QuoteViewModel())
 } 

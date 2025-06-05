@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject private var themeManager: ThemeManager
+    @EnvironmentObject private var moodVM: MoodViewModel
     @State private var selectedTab = 0
     
     var body: some View {
@@ -15,7 +16,14 @@ struct ContentView: View {
             .tag(0)
             
             NavigationView {
-                MoodSelectionView()
+                MoodSelectionView { moodType, intensity in
+                    let mood = moodType.toMood
+                    let clampedIntensity = max(1, min(5, intensity))
+                    let newEntry = MoodEntry(mood: mood, intensity: clampedIntensity, timestamp: Date(), journalEntry: nil)
+                    moodVM.moodEntries.insert(newEntry, at: 0)
+                    moodVM.saveMoodEntries()
+                    // Optionally: show a success message or navigate
+                }
             }
             .tabItem {
                 Label("Mood", systemImage: "face.smiling")

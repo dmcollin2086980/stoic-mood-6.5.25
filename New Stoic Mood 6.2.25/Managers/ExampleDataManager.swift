@@ -132,7 +132,7 @@ class ExampleDataManager: ObservableObject {
                 print("Data population completed")
                 print("Mood entries: \(moodVM.moodEntries.count)")
                 print("Reflections: \(reflectionVM.reflections.count)")
-                print("Exercises: \(exerciseVM.exercises.count)")
+                print("Exercises: \(exerciseVM.exerciseHistory.count)")
                 print("Saved quotes: \(quoteVM.savedQuotes.count)")
                 
                 self.isPopulating = false
