@@ -59,4 +59,5 @@ struct ReflectionPromptsView_Previews: PreviewProvider {
         ReflectionPromptsView(selectedPrompt: .constant(nil))
             .environmentObject(ThemeManager())
     }
-} 
+}
+

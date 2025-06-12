@@ -30,4 +30,5 @@ struct ThemeToggle: View {
     ThemeToggle()
         .environmentObject(ThemeManager())
         .padding()
-} 
+}
+

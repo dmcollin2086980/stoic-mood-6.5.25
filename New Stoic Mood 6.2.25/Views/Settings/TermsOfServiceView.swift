@@ -54,4 +54,5 @@ struct TermsOfServiceView: View {
         TermsOfServiceView()
             .environmentObject(ThemeManager())
     }
-} 
+}
+

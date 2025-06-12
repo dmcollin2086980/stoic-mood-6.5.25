@@ -46,4 +46,5 @@ struct ExerciseHistoryRow: View {
             .environmentObject(ThemeManager())
             .environmentObject(ExerciseViewModel())
     }
-} 
+}
+

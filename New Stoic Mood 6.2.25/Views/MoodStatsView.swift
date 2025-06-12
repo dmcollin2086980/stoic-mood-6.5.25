@@ -139,4 +139,5 @@ struct MoodStatsView: View {
             .environmentObject(MoodViewModel())
             .environmentObject(ThemeManager())
     }
-} 
+}
+

@@ -104,4 +104,5 @@ custom_rules:
     regex: '//\s*FIXME:'
     capture_group: 0
     message: "FIXME comments should be resolved before shipping."
-    severity: warning 
+    severity: warning
+

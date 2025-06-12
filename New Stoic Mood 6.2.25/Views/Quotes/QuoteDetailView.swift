@@ -113,4 +113,5 @@ struct ShareSheet: UIViewControllerRepresentable {
         .environmentObject(ThemeManager())
         .environmentObject(QuoteViewModel())
     }
-} 
+}
+

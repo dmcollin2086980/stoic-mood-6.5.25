@@ -140,4 +140,5 @@ struct EmojiPickerView: View {
         onSelect: { _, _, _ in }
     )
     .environmentObject(ThemeManager())
-} 
+}
+

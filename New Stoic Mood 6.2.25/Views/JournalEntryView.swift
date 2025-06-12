@@ -107,4 +107,5 @@ struct JournalEntryView: View {
 #Preview {
     JournalEntryView(mood: .happy, intensity: 0.8) { _ in }
         .environmentObject(ThemeManager())
-} 
+}
+

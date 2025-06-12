@@ -75,4 +75,5 @@ extension View {
     }
     .environmentObject(ThemeManager())
     .padding()
-} 
+}
+

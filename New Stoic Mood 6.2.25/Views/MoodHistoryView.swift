@@ -60,4 +60,5 @@ struct MoodHistoryCard: View {
             .environmentObject(ThemeManager())
             .environmentObject(MoodViewModel())
     }
-} 
+}
+

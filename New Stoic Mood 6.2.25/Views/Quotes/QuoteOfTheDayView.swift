@@ -64,4 +64,5 @@ private struct ActionButton: View {
     QuoteOfTheDayView()
         .environmentObject(ThemeManager())
         .environmentObject(QuoteViewModel())
-} 
+}
+

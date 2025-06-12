@@ -65,4 +65,5 @@ struct QuotesView: View {
     QuotesView()
         .environmentObject(ThemeManager())
         .environmentObject(QuoteViewModel())
-} 
+}
+

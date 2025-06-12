@@ -36,4 +36,5 @@ struct MoodCard: View {
         action: {}
     )
     .environmentObject(ThemeManager())
-} 
+}
+

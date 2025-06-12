@@ -46,4 +46,5 @@ struct SavedQuotesView: View {
             .environmentObject(ThemeManager())
             .environmentObject(QuoteViewModel())
     }
-} 
+}
+

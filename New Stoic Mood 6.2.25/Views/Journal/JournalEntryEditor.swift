@@ -36,4 +36,5 @@ struct JournalEntryEditor: View {
     )
     .environmentObject(ThemeManager())
     .padding()
-} 
+}
+

@@ -149,4 +149,5 @@ struct StatCard: View {
             .environmentObject(MoodViewModel())
             .environmentObject(QuoteViewModel())
     }
-} 
+}
+

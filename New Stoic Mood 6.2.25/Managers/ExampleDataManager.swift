@@ -348,4 +348,5 @@ class ExampleDataManager: ObservableObject {
         return base + " " + progression + " " + detail
     }
 } 
-#endif 
+#endif
+

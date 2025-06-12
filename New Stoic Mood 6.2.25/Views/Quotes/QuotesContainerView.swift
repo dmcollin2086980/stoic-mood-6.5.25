@@ -116,4 +116,5 @@ struct QuotesContainerView: View {
             .environmentObject(QuoteViewModel())
             .environmentObject(ThemeManager())
     }
-} 
+}
+

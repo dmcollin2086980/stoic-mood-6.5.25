@@ -54,4 +54,5 @@ struct SettingsView: View {
         .environmentObject(MoodViewModel())
         .environmentObject(ExerciseViewModel())
         .environmentObject(QuoteViewModel())
-} 
+}
+

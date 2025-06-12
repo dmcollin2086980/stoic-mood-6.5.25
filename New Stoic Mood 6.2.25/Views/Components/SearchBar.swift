@@ -32,4 +32,5 @@ struct SearchBar: View {
     SearchBar(text: .constant(""), placeholder: "Search...")
         .environmentObject(ThemeManager())
         .padding()
-} 
+}
+

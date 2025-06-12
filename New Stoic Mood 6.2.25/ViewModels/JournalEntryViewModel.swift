@@ -107,4 +107,5 @@ class JournalEntryViewModel: ObservableObject {
         )
         moodViewModel.loadData() // Refresh the view model's data
     }
-} 
+}
+

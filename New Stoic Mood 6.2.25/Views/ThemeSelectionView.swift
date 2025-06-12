@@ -97,4 +97,5 @@ struct ThemePreviewCard: View {
 #Preview {
     ThemeSelectionView()
         .environmentObject(ThemeManager())
-} 
+}
+

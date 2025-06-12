@@ -42,4 +42,5 @@ public extension View {
             .cornerRadius(Theme.cornerRadius)
             .shadow(color: Theme.shadowColor, radius: 5, x: 0, y: 2)
     }
-} 
+}
+
