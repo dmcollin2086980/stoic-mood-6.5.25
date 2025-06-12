@@ -4,13 +4,13 @@ import Charts
 struct MoodFlowView: View {
     let data: [MoodFlowData]
     @EnvironmentObject private var themeManager: ThemeManager
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Mood Flow")
                 .font(.headline)
                 .foregroundColor(themeManager.textColor)
-            
+
             Chart {
                 ForEach(data) { dataPoint in
                     LineMark(
@@ -18,7 +18,7 @@ struct MoodFlowView: View {
                         y: .value("Mood", dataPoint.value)
                     )
                     .foregroundStyle(themeManager.accentColor)
-                    
+
                     PointMark(
                         x: .value("Date", dataPoint.date),
                         y: .value("Mood", dataPoint.value)
@@ -35,13 +35,13 @@ struct MoodFlowView: View {
 struct MoodDistributionView: View {
     let data: [MoodDistributionData]
     @EnvironmentObject private var themeManager: ThemeManager
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Mood Distribution")
                 .font(.headline)
                 .foregroundColor(themeManager.textColor)
-            
+
             Chart {
                 ForEach(data) { dataPoint in
                     BarMark(
@@ -61,7 +61,7 @@ struct InsightTypePickerView: View {
     @Binding var selectedInsight: InsightType
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var themeManager: ThemeManager
-    
+
     var body: some View {
         NavigationView {
             List(InsightType.allCases, id: \.self) { insight in
@@ -91,4 +91,4 @@ struct InsightTypePickerView: View {
             }
         }
     }
-} 
+}

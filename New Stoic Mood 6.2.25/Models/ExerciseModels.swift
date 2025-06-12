@@ -15,7 +15,7 @@ struct ExerciseEntry: Identifiable, Codable {
     let prompt: String
     let response: String
     let timestamp: Date
-    
+
     init(id: UUID = UUID(), date: Date = Date(), prompt: String, response: String, timestamp: Date = Date()) {
         self.id = id
         self.date = date
@@ -23,4 +23,4 @@ struct ExerciseEntry: Identifiable, Codable {
         self.response = response
         self.timestamp = timestamp
     }
-} 
+}

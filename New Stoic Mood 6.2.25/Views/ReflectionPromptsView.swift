@@ -4,7 +4,7 @@ struct ReflectionPromptsView: View {
     @EnvironmentObject private var themeManager: ThemeManager
     @Binding var selectedPrompt: String?
     @Environment(\.dismiss) private var dismiss
-    
+
     private let prompts = [
         "What aspects of today am I grateful for?",
         "How did I practice virtue today?",
@@ -17,7 +17,7 @@ struct ReflectionPromptsView: View {
         "How did I grow today?",
         "What would I like to improve tomorrow?"
     ]
-    
+
     var body: some View {
         NavigationView {
             ScrollView {
@@ -59,4 +59,4 @@ struct ReflectionPromptsView_Previews: PreviewProvider {
         ReflectionPromptsView(selectedPrompt: .constant(nil))
             .environmentObject(ThemeManager())
     }
-} 
+}

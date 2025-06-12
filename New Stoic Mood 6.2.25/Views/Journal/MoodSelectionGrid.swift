@@ -4,9 +4,9 @@ struct MoodSelectionGrid: View {
     let moods: [Mood]
     let selectedMood: Mood?
     let onMoodSelected: (Mood) -> Void
-    
+
     @EnvironmentObject private var themeManager: ThemeManager
-    
+
     var body: some View {
         LazyVGrid(columns: [
             GridItem(.flexible()),
@@ -32,4 +32,4 @@ struct MoodSelectionGrid: View {
         onMoodSelected: { _ in }
     )
     .environmentObject(ThemeManager())
-} 
+}

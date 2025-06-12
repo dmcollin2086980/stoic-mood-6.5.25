@@ -10,7 +10,7 @@ struct EnhancedMoodSelectionView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var showingEmojiPicker = false
     @State private var note: String = ""
-    
+
     var body: some View {
         NavigationView {
             ScrollView {
@@ -19,16 +19,16 @@ struct EnhancedMoodSelectionView: View {
                     Text(selectedMood?.emoji ?? "")
                         .font(.system(size: 60))
                         .padding()
-                    
+
                     // Intensity Slider
                     VStack(alignment: .leading, spacing: ThemeManager.smallPadding) {
                         Text("Intensity")
                             .font(.headline)
                             .foregroundColor(themeManager.textColor)
-                        
+
                         Slider(value: $selectedIntensity, in: 1.0...10.0, step: 1.0)
                             .accentColor(themeManager.accentColor)
-                        
+
                         Text("\(Int(selectedIntensity))")
                             .font(.subheadline)
                             .foregroundColor(themeManager.secondaryTextColor)
@@ -36,13 +36,13 @@ struct EnhancedMoodSelectionView: View {
                     .padding()
                     .background(themeManager.cardBackgroundColor)
                     .cornerRadius(ThemeManager.cornerRadius)
-                    
+
                     // Note Input
                     VStack(alignment: .leading, spacing: ThemeManager.smallPadding) {
                         Text("Note (Optional)")
                             .font(.headline)
                             .foregroundColor(themeManager.textColor)
-                        
+
                         TextEditor(text: $note)
                             .frame(height: 100)
                             .padding(ThemeManager.smallPadding)
@@ -52,7 +52,7 @@ struct EnhancedMoodSelectionView: View {
                     .padding()
                     .background(themeManager.cardBackgroundColor)
                     .cornerRadius(ThemeManager.cornerRadius)
-                    
+
                     // Save Button
                     Button {
                         if let mood = selectedMood {
@@ -91,9 +91,9 @@ struct EmojiPickerView: View {
     @Binding var selectedEmoji: String
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var themeManager: ThemeManager
-    
+
     private let emojis = ["😊", "😌", "😐", "😔", "😢", "😡", "😴", "🤔", "😎", "🥰"]
-    
+
     var body: some View {
         NavigationView {
             ScrollView {
@@ -140,4 +140,4 @@ struct EmojiPickerView: View {
         onSelect: { _, _, _ in }
     )
     .environmentObject(ThemeManager())
-} 
+}

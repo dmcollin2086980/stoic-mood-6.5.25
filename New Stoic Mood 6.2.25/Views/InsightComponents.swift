@@ -4,7 +4,7 @@ import Charts
 struct TimePatternsView: View {
     let timePatterns: [TimePatternData]
     @EnvironmentObject private var themeManager: ThemeManager
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Time Patterns")
@@ -25,7 +25,7 @@ struct TimePatternsView: View {
 struct InsightMoodFlowChartView: View {
     let data: [MoodFlowData]
     @EnvironmentObject private var themeManager: ThemeManager
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.smallPadding) {
             Text("Mood Flow")
@@ -61,12 +61,12 @@ struct InsightMoodFlowChartView: View {
 struct MoodTransitionsView: View {
     @EnvironmentObject var viewModel: MoodViewModel
     @EnvironmentObject private var themeManager: ThemeManager
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Mood Transitions")
                 .font(.headline)
-            
+
             if let transitions = viewModel.moodTransitions {
                 ForEach(transitions, id: \.from) { transition in
                     HStack {
@@ -89,12 +89,12 @@ struct MoodTransitionsView: View {
 struct JournalAnalysisView: View {
     @EnvironmentObject var viewModel: MoodViewModel
     @EnvironmentObject private var themeManager: ThemeManager
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Journal Analysis")
                 .font(.headline)
-            
+
             if let analysis = viewModel.textAnalysis {
                 VStack(alignment: .leading, spacing: 8) {
                     StatRow(title: "Average Length", value: "\(analysis.averageLength) words")
@@ -113,7 +113,7 @@ struct JournalAnalysisView: View {
 struct EmotionalPatternsView: View {
     let patterns: [String]?
     @EnvironmentObject private var themeManager: ThemeManager
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.smallPadding) {
             if let patterns = patterns {
@@ -132,7 +132,7 @@ struct EmotionalPatternsView: View {
 struct GrowthInsightsView: View {
     let insights: [String]?
     @EnvironmentObject private var themeManager: ThemeManager
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.smallPadding) {
             if let insights = insights {
@@ -153,7 +153,7 @@ struct ReflectionQualityView: View {
     let consistency: Int
     let feedback: String?
     @EnvironmentObject private var themeManager: ThemeManager
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.smallPadding) {
             Text("Reflection Quality")
@@ -179,7 +179,7 @@ struct StatRow: View {
     let title: String
     let value: String
     @EnvironmentObject private var themeManager: ThemeManager
-    
+
     var body: some View {
         HStack {
             Text(title)
@@ -194,7 +194,7 @@ struct StatRow: View {
 struct InsightComponents: View {
     @EnvironmentObject var viewModel: MoodViewModel
     @EnvironmentObject private var themeManager: ThemeManager
-    
+
     var body: some View {
         VStack(spacing: 20) {
             TimePatternsView(timePatterns: viewModel.timePatterns)
@@ -208,14 +208,14 @@ struct InsightComponents: View {
 struct TimePatternCard: View {
     let pattern: TimePatternData
     @EnvironmentObject private var themeManager: ThemeManager
-    
+
     var body: some View {
         HStack {
             Image(systemName: pattern.icon)
                 .font(.title2)
                 .foregroundColor(themeManager.accentColor)
                 .frame(width: 40)
-            
+
             VStack(alignment: .leading) {
                 Text(pattern.title)
                     .font(.subheadline)
@@ -225,7 +225,7 @@ struct TimePatternCard: View {
                     .font(.caption)
                     .foregroundColor(themeManager.secondaryTextColor)
             }
-            
+
             Spacer()
         }
         .padding()
@@ -237,17 +237,17 @@ struct TimePatternCard: View {
 struct GrowthInsightCard: View {
     let insight: GrowthInsight
     @EnvironmentObject private var themeManager: ThemeManager
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(insight.title)
                 .font(.headline)
                 .foregroundColor(themeManager.textColor)
-            
+
             Text(insight.description)
                 .font(.subheadline)
                 .foregroundColor(themeManager.secondaryTextColor)
-            
+
             ProgressView(value: insight.progress)
                 .tint(themeManager.accentColor)
         }
@@ -260,13 +260,13 @@ struct GrowthInsightCard: View {
 struct MoodDistributionChart: View {
     let data: [MoodDistribution]
     @EnvironmentObject private var themeManager: ThemeManager
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.smallPadding) {
             Text("Mood Distribution")
                 .font(.headline)
                 .foregroundColor(themeManager.textColor)
-            
+
             Chart(data) { distribution in
                 BarMark(
                     x: .value("Mood", distribution.mood.rawValue),
@@ -287,7 +287,7 @@ struct TimeOfDayHeatmap: View {
     private let timeLabels = ["12am-3am", "3am-6am", "6am-9am", "9am-12pm", "12pm-3pm", "3pm-6pm", "6pm-9pm", "9pm-12am"]
     private let dayLabels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
     @EnvironmentObject private var themeManager: ThemeManager
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.smallPadding) {
             HStack(alignment: .top, spacing: Theme.smallPadding) {
@@ -299,7 +299,7 @@ struct TimeOfDayHeatmap: View {
                             .foregroundColor(themeManager.textColor)
                     }
                 }
-                
+
                 // Heatmap grid
                 VStack(spacing: Theme.smallPadding) {
                     // Day labels
@@ -311,7 +311,7 @@ struct TimeOfDayHeatmap: View {
                                 .frame(maxWidth: .infinity)
                         }
                     }
-                    
+
                     // Grid cells
                     ForEach(0..<8) { row in
                         HStack(spacing: Theme.smallPadding) {
@@ -337,7 +337,7 @@ struct TimeOfDayHeatmap: View {
 struct WordCloudView: View {
     let words: [(String, Int)]
     @EnvironmentObject private var themeManager: ThemeManager
-    
+
     var body: some View {
         FlowLayout(spacing: 8) {
             ForEach(words, id: \.0) { word, size in
@@ -365,13 +365,13 @@ struct TimePatternData: Identifiable {
 struct TimePatternChart: View {
     let data: [TimePatternData]
     @EnvironmentObject private var themeManager: ThemeManager
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.smallPadding) {
             Text("Time Patterns")
                 .font(.headline)
                 .foregroundColor(themeManager.textColor)
-            
+
             Chart(data) { pattern in
                 BarMark(
                     x: .value("Hour", pattern.hour),
@@ -400,13 +400,13 @@ struct TimePatternChart: View {
 struct EmotionalPatternView: View {
     let pattern: String
     @EnvironmentObject private var themeManager: ThemeManager
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.smallPadding) {
             Text("Emotional Pattern")
                 .font(.headline)
                 .foregroundColor(themeManager.textColor)
-            
+
             Text(pattern)
                 .foregroundColor(themeManager.textColor)
         }
@@ -419,13 +419,13 @@ struct EmotionalPatternView: View {
 struct GrowthInsightView: View {
     let insight: String
     @EnvironmentObject private var themeManager: ThemeManager
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: Theme.smallPadding) {
             Text("Growth Insight")
                 .font(.headline)
                 .foregroundColor(themeManager.textColor)
-            
+
             Text(insight)
                 .foregroundColor(themeManager.textColor)
         }
@@ -444,13 +444,13 @@ struct InsightComponents_Previews: PreviewProvider {
                 MoodFlowData(date: Date().addingTimeInterval(86400), value: 3),
                 MoodFlowData(date: Date().addingTimeInterval(172800), value: 5)
             ])
-            
+
             MoodDistributionChart(data: [
                 MoodDistribution(mood: .calm, count: 5, percentage: 0.5),
                 MoodDistribution(mood: .focused, count: 3, percentage: 0.3),
                 MoodDistribution(mood: .anxious, count: 1, percentage: 0.1)
             ])
-            
+
             TimePatternChart(data: [
                 TimePatternData(icon: "sunrise.fill", title: "Morning", description: "Morning entries", hour: 9, count: 3),
                 TimePatternData(icon: "sun.max.fill", title: "Noon", description: "Noon entries", hour: 12, count: 5),
@@ -460,4 +460,4 @@ struct InsightComponents_Previews: PreviewProvider {
         .padding()
         .environmentObject(ThemeManager())
     }
-} 
+}

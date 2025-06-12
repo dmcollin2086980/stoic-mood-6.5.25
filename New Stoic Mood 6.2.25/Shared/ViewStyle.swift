@@ -3,7 +3,7 @@ import SwiftUI
 // MARK: - Card Style
 struct CardModifier: ViewModifier {
     @EnvironmentObject private var themeManager: ThemeManager
-    
+
     func body(content: Content) -> some View {
         content
             .padding()
@@ -20,7 +20,7 @@ struct CardModifier: ViewModifier {
 // MARK: - Section Header Style
 struct SectionHeaderModifier: ViewModifier {
     @EnvironmentObject private var themeManager: ThemeManager
-    
+
     func body(content: Content) -> some View {
         content
             .font(.headline)
@@ -33,7 +33,7 @@ struct SectionHeaderModifier: ViewModifier {
 // MARK: - Chart Container Style
 struct ChartContainerModifier: ViewModifier {
     @EnvironmentObject private var themeManager: ThemeManager
-    
+
     func body(content: Content) -> some View {
         content
             .padding()
@@ -51,11 +51,11 @@ extension View {
     func cardStyle() -> some View {
         self.modifier(CardModifier())
     }
-    
+
     func sectionHeader() -> some View {
         self.modifier(SectionHeaderModifier())
     }
-    
+
     func chartContainer() -> some View {
         self.modifier(ChartContainerModifier())
     }
@@ -66,13 +66,13 @@ extension View {
     VStack(spacing: 20) {
         Text("Card Style")
             .cardStyle()
-        
+
         Text("Section Header")
             .sectionHeader()
-        
+
         Text("Chart Container")
             .chartContainer()
     }
     .environmentObject(ThemeManager())
     .padding()
-} 
+}

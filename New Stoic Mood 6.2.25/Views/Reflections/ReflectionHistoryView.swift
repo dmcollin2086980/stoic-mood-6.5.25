@@ -5,7 +5,7 @@ struct ReflectionHistoryView: View {
     @EnvironmentObject private var themeManager: ThemeManager
     @State private var reflectionToDelete: Reflection?
     @State private var showingDeleteAlert = false
-    
+
     var body: some View {
         List {
             if reflectionVM.reflections.isEmpty {
@@ -20,19 +20,19 @@ struct ReflectionHistoryView: View {
                             Text(reflection.date.formatted(date: .long, time: .omitted))
                                 .font(.subheadline)
                                 .foregroundColor(themeManager.secondaryTextColor)
-                            
+
                             // Exercise Prompt
                             VStack(alignment: .leading, spacing: 4) {
                                 Text("Today's Exercise:")
                                     .font(.subheadline)
                                     .foregroundColor(themeManager.secondaryTextColor)
-                                
+
                                 Text(reflection.exercisePrompt)
                                     .font(.subheadline)
                                     .foregroundColor(themeManager.secondaryTextColor)
                                     .italic()
                             }
-                            
+
                             // Reflection Response
                             Text(reflection.content)
                                 .font(.body)
@@ -70,4 +70,4 @@ struct ReflectionHistoryView: View {
             .environmentObject(ReflectionViewModel())
             .environmentObject(ThemeManager())
     }
-} 
+}

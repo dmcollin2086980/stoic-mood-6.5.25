@@ -4,11 +4,11 @@ struct OnboardingView: View {
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
     @State private var currentPage = 0
     @EnvironmentObject private var themeManager: ThemeManager
-    
+
     var body: some View {
         ZStack {
             themeManager.backgroundColor.ignoresSafeArea()
-            
+
             TabView(selection: $currentPage) {
                 ForEach(OnboardingPage.pages.indices, id: \.self) { index in
                     OnboardingPageView(themeManager: themeManager, page: OnboardingPage.pages[index])
@@ -16,11 +16,11 @@ struct OnboardingView: View {
                 }
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
-            
+
             // Page Indicator
             VStack {
                 Spacer()
-                
+
                 HStack(spacing: 8) {
                     ForEach(OnboardingPage.pages.indices, id: \.self) { index in
                         Circle()
@@ -31,7 +31,7 @@ struct OnboardingView: View {
                     }
                 }
                 .padding(.bottom, 20)
-                
+
                 // Navigation Buttons
                 HStack {
                     if currentPage > 0 {
@@ -44,9 +44,9 @@ struct OnboardingView: View {
                                 .foregroundColor(themeManager.secondaryTextColor)
                         }
                     }
-                    
+
                     Spacer()
-                    
+
                     if currentPage < OnboardingPage.pages.count - 1 {
                         Button {
                             withAnimation {
@@ -83,7 +83,7 @@ struct OnboardingPage: Identifiable {
     let subtitle: String
     let quote: String
     let quoteAuthor: String
-    
+
     static let pages = [
         OnboardingPage(
             image: "moon.stars.fill",
@@ -119,36 +119,36 @@ struct OnboardingPage: Identifiable {
 struct OnboardingPageView: View {
     let themeManager: ThemeManager
     let page: OnboardingPage
-    
+
     var body: some View {
         VStack(spacing: 40) {
             Spacer()
-            
+
             Image(systemName: page.image)
                 .font(.system(size: 80))
                 .foregroundColor(themeManager.accentColor)
                 .symbolEffect(.bounce, options: .repeating)
-            
+
             VStack(spacing: 16) {
                 Text(page.title)
                     .font(.title)
                     .foregroundColor(themeManager.textColor)
                     .multilineTextAlignment(.center)
-                
+
                 Text(page.subtitle)
                     .font(.body)
                     .foregroundColor(themeManager.secondaryTextColor)
                     .multilineTextAlignment(.center)
             }
             .padding(.horizontal, 32)
-            
+
             VStack(spacing: 8) {
                 Text(page.quote)
                     .font(.body)
                     .foregroundColor(themeManager.textColor)
                     .italic()
                     .multilineTextAlignment(.center)
-                
+
                 Text("— \(page.quoteAuthor)")
                     .font(.caption)
                     .foregroundColor(themeManager.secondaryTextColor)
@@ -158,7 +158,7 @@ struct OnboardingPageView: View {
             .background(themeManager.cardBackgroundColor)
             .cornerRadius(12)
             .padding(.horizontal, 32)
-            
+
             Spacer()
         }
     }
@@ -167,4 +167,4 @@ struct OnboardingPageView: View {
 #Preview {
     OnboardingView()
         .environmentObject(ThemeManager())
-} 
+}

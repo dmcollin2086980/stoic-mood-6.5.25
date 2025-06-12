@@ -5,24 +5,24 @@ class ExerciseViewModel: ObservableObject {
     // MARK: - Published Properties
     @Published var dailyExercise: StoicExercise?
     @Published var exerciseHistory: [ExerciseEntry] = []
-    
+
     // MARK: - Private Properties
     private let userDefaults = UserDefaults.standard
     private let exerciseHistoryKey = "SavedExerciseHistory"
-    
+
     // MARK: - Initialization
     init() {
         loadData()
         generateDailyExercise()
     }
-    
+
     // MARK: - Data Management
     /// Removes all exercise history entries and saves the changes
     public func clearAll() {
         exerciseHistory.removeAll()
         saveData()
     }
-    
+
     /// Adds a new exercise entry to the history
     /// - Parameters:
     ///   - date: The date of the exercise
@@ -39,7 +39,7 @@ class ExerciseViewModel: ObservableObject {
         exerciseHistory.insert(entry, at: 0)
         saveData()
     }
-    
+
     // MARK: - Private Methods
     private func generateDailyExercise() {
         let exercises = [
@@ -86,20 +86,20 @@ class ExerciseViewModel: ObservableObject {
                 ]
             )
         ]
-        
+
         dailyExercise = exercises.randomElement()
     }
-    
+
     private func loadData() {
         if let data = userDefaults.data(forKey: exerciseHistoryKey),
            let decoded = try? JSONDecoder().decode([ExerciseEntry].self, from: data) {
             exerciseHistory = decoded.sorted { $0.date > $1.date }
         }
     }
-    
+
     private func saveData() {
         if let encoded = try? JSONEncoder().encode(exerciseHistory) {
             userDefaults.set(encoded, forKey: exerciseHistoryKey)
         }
     }
-} 
+}

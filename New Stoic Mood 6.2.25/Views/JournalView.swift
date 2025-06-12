@@ -4,50 +4,50 @@ import SwiftUI
 /// This view provides functionality for viewing, filtering, and exporting journal entries.
 struct JournalView: View {
     // MARK: - Properties
-    
+
     /// The environment object that provides theme-related functionality
     @EnvironmentObject private var themeManager: ThemeManager
-    
+
     /// The state object that manages journal entries
     @StateObject private var journalManager = JournalManager.shared
-    
+
     /// The search text used to filter journal entries
     @State private var searchText = ""
-    
+
     /// The currently selected filter for journal entries
     @State private var selectedFilter: JournalFilter = .all
-    
+
     /// A boolean indicating whether the journal flow sheet is presented
     @State private var showingJournalSheet = false
-    
+
     /// The current step in the journal entry flow
     @State private var flowStep: JournalFlowStep = .moodSelection
-    
+
     /// The selected mood and intensity for the new entry
     @State private var selectedMood: Mood?
     @State private var selectedIntensity: Double?
-    
+
     /// A boolean indicating whether the export options view is presented
     @State private var showingExportOptions = false
-    
+
     @StateObject private var viewModel = JournalViewModel()
     @State private var showingPromptSheet = false
     @State private var selectedPrompt: String?
-    
+
     // MARK: - Computed Properties
-    
+
     /// Returns the filtered journal entries based on search text and selected filter
     private var filteredEntries: [JournalEntry] {
         journalManager.entries.filter { entry in
-            let matchesSearch = searchText.isEmpty || 
+            let matchesSearch = searchText.isEmpty ||
                 entry.content.localizedCaseInsensitiveContains(searchText)
-            
+
             let matchesFilter = matchesFilterCriteria(entry)
-            
+
             return matchesSearch && matchesFilter
         }
     }
-    
+
     private func matchesFilterCriteria(_ entry: JournalEntry) -> Bool {
         switch selectedFilter {
         case .all:
@@ -60,19 +60,19 @@ struct JournalView: View {
             return Calendar.current.isDate(entry.date, equalTo: Date(), toGranularity: .year)
         }
     }
-    
+
     // MARK: - Body
-    
+
     var body: some View {
         NavigationStack {
             ZStack {
                 themeManager.backgroundColor.ignoresSafeArea()
-                
+
                 VStack(spacing: ThemeManager.padding) {
                     // Search bar
                     SearchBar(text: $searchText, placeholder: "Search journal entries...")
                         .padding(.horizontal)
-                    
+
                     // Filter buttons
                     HStack(spacing: ThemeManager.spacing) {
                         ForEach(JournalFilter.allCases, id: \.self) { filter in
@@ -84,7 +84,7 @@ struct JournalView: View {
                         }
                     }
                     .padding(.horizontal)
-                    
+
                     // Journal entries list
                     ScrollView {
                         LazyVStack(spacing: ThemeManager.spacing) {
@@ -94,13 +94,13 @@ struct JournalView: View {
                         }
                         .padding()
                     }
-                    
+
                     // Journal Entry
                     VStack(alignment: .leading, spacing: ThemeManager.smallPadding) {
                         Text("Today's Reflection")
                             .font(.headline)
                             .foregroundColor(themeManager.textColor)
-                        
+
                         TextEditor(text: $viewModel.journalText)
                             .frame(minHeight: 150)
                             .padding(ThemeManager.smallPadding)
@@ -111,16 +111,16 @@ struct JournalView: View {
                     .padding()
                     .background(themeManager.cardBackgroundColor)
                     .cornerRadius(ThemeManager.cornerRadius)
-                    
+
                     // Prompts Section
                     VStack(alignment: .leading, spacing: ThemeManager.smallPadding) {
                         HStack {
                             Text("Reflection Prompts")
                                 .font(.headline)
                                 .foregroundColor(themeManager.textColor)
-                            
+
                             Spacer()
-                            
+
                             Button {
                                 showingPromptSheet = true
                             } label: {
@@ -128,7 +128,7 @@ struct JournalView: View {
                                     .foregroundColor(themeManager.accentColor)
                             }
                         }
-                        
+
                         if let prompt = selectedPrompt {
                             Text(prompt)
                                 .font(.body)
@@ -142,7 +142,7 @@ struct JournalView: View {
                     .padding()
                     .background(themeManager.cardBackgroundColor)
                     .cornerRadius(ThemeManager.cornerRadius)
-                    
+
                     // Save Button
                     Button {
                         viewModel.saveJournalEntry()
@@ -156,15 +156,15 @@ struct JournalView: View {
                             .cornerRadius(ThemeManager.cornerRadius)
                     }
                 }
-                
+
                 // Floating Action Button
                 VStack {
                     Spacer()
                     HStack {
                         Spacer()
-                        Button(action: { 
+                        Button(action: {
                             flowStep = .moodSelection
-                            showingJournalSheet = true 
+                            showingJournalSheet = true
                         }) {
                             Image(systemName: "plus")
                                 .font(.title2)
@@ -233,16 +233,16 @@ enum JournalFlowStep {
 struct FilterButton: View {
     /// The title text displayed on the button
     let title: String
-    
+
     /// A boolean indicating whether the button is selected
     let isSelected: Bool
-    
+
     /// The action to perform when the button is tapped
     let action: () -> Void
-    
+
     /// The environment object that provides theme-related functionality
     @EnvironmentObject var themeManager: ThemeManager
-    
+
     var body: some View {
         Button(action: action) {
             Text(title)
@@ -259,10 +259,10 @@ struct FilterButton: View {
 struct JournalEntryCard: View {
     /// The journal entry to display
     let entry: JournalEntry
-    
+
     /// The environment object that provides theme-related functionality
     @EnvironmentObject var themeManager: ThemeManager
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: ThemeManager.spacing) {
             HStack {
@@ -275,11 +275,11 @@ struct JournalEntryCard: View {
                     .font(.subheadline)
                     .foregroundColor(themeManager.secondaryTextColor)
             }
-            
+
             Text(entry.content)
                 .font(.body)
                 .foregroundColor(themeManager.textColor)
-            
+
             HStack {
                 Text("Intensity: \(Int(entry.intensity * 100))%")
                     .font(.caption)
@@ -300,20 +300,20 @@ struct JournalEntryCard: View {
 struct ExportOptionsView: View {
     /// The environment object that provides theme-related functionality
     @EnvironmentObject var themeManager: ThemeManager
-    
+
     /// The state object that manages journal entries
     @StateObject private var journalManager = JournalManager.shared
-    
+
     /// A boolean indicating whether the view is presented
     @Environment(\.dismiss) private var dismiss
-    
+
     /// State variables for export process
     @State private var isExporting = false
     @State private var showingShareSheet = false
     @State private var exportURL: URL?
     @State private var showingError = false
     @State private var errorMessage = ""
-    
+
     var body: some View {
         NavigationStack {
             List {
@@ -325,7 +325,7 @@ struct ExportOptionsView: View {
                         }
                     }
                     .disabled(isExporting)
-                    
+
                     Button(action: exportCSV) {
                         HStack {
                             Image(systemName: "tablecells")
@@ -364,19 +364,19 @@ struct ExportOptionsView: View {
             }
         }
     }
-    
+
     private func exportPDF() {
         guard !journalManager.entries.isEmpty else {
             errorMessage = "No entries to export"
             showingError = true
             return
         }
-        
+
         isExporting = true
-        
+
         ExportManager.shared.exportToPDF(entries: journalManager.entries) { result in
             isExporting = false
-            
+
             switch result {
             case .success(let url):
                 exportURL = url
@@ -387,19 +387,19 @@ struct ExportOptionsView: View {
             }
         }
     }
-    
+
     private func exportCSV() {
         guard !journalManager.entries.isEmpty else {
             errorMessage = "No entries to export"
             showingError = true
             return
         }
-        
+
         isExporting = true
-        
+
         ExportManager.shared.exportToCSV(entries: journalManager.entries) { result in
             isExporting = false
-            
+
             switch result {
             case .success(let url):
                 exportURL = url
@@ -417,4 +417,4 @@ struct ExportOptionsView: View {
         JournalView()
             .environmentObject(ThemeManager())
     }
-} 
+}

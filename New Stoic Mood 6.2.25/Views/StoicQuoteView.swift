@@ -4,7 +4,7 @@ struct StoicQuoteView: View {
     @EnvironmentObject var themeManager: ThemeManager
     @State private var currentQuote: String = ""
     @State private var isAnimating = false
-    
+
     var body: some View {
         VStack(spacing: 20) {
             Text(currentQuote)
@@ -28,4 +28,4 @@ struct StoicQuoteView: View {
 #Preview {
     StoicQuoteView()
         .environmentObject(ThemeManager())
-} 
+}

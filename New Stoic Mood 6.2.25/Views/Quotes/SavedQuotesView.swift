@@ -4,7 +4,7 @@ struct SavedQuotesView: View {
     @EnvironmentObject private var quoteVM: QuoteViewModel
     @EnvironmentObject private var themeManager: ThemeManager
     @State private var selectedQuote: StoicQuote?
-    
+
     var body: some View {
         List {
             if quoteVM.savedQuotes.isEmpty {
@@ -46,4 +46,4 @@ struct SavedQuotesView: View {
             .environmentObject(ThemeManager())
             .environmentObject(QuoteViewModel())
     }
-} 
+}

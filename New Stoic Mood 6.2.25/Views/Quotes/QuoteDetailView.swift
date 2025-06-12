@@ -5,14 +5,14 @@ struct QuoteDetailView: View {
     @EnvironmentObject private var quoteVM: QuoteViewModel
     @EnvironmentObject private var themeManager: ThemeManager
     @Environment(\.dismiss) private var dismiss
-    
+
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
                 // Quote Card
                 QuoteCard(quote: quote)
                     .padding(.horizontal)
-                
+
                 // Actions
                 HStack(spacing: 20) {
                     ActionButton(
@@ -20,13 +20,13 @@ struct QuoteDetailView: View {
                         label: "Save",
                         action: { quoteVM.saveQuote(quote) }
                     )
-                    
+
                     ActionButton(
                         icon: "square.and.arrow.up",
                         label: "Share",
                         action: { quoteVM.shareQuote(quote) }
                     )
-                    
+
                     ActionButton(
                         icon: "text.quote",
                         label: "Copy",
@@ -34,13 +34,13 @@ struct QuoteDetailView: View {
                     )
                 }
                 .padding()
-                
+
                 // Author Info
                 VStack(alignment: .leading, spacing: 10) {
                     Text("About \(quote.author)")
                         .font(.headline)
                         .foregroundColor(themeManager.textColor)
-                    
+
                     Text("Marcus Aurelius was a Roman emperor and Stoic philosopher who wrote 'Meditations', a series of personal writings on Stoic philosophy.")
                         .font(.body)
                         .foregroundColor(themeManager.secondaryTextColor)
@@ -74,7 +74,7 @@ private struct ActionButton: View {
     let label: String
     let action: () -> Void
     @EnvironmentObject private var themeManager: ThemeManager
-    
+
     var body: some View {
         Button(action: action) {
             VStack(spacing: 8) {
@@ -94,11 +94,11 @@ private struct ActionButton: View {
 
 struct ShareSheet: UIViewControllerRepresentable {
     let activityItems: [Any]
-    
+
     func makeUIViewController(context: Context) -> UIActivityViewController {
         UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
     }
-    
+
     func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
 }
 
@@ -113,4 +113,4 @@ struct ShareSheet: UIViewControllerRepresentable {
         .environmentObject(ThemeManager())
         .environmentObject(QuoteViewModel())
     }
-} 
+}

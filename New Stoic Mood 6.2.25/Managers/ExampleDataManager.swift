@@ -7,7 +7,7 @@ class ExampleDataManager: ObservableObject {
     @Published var progress: Double = 0.0
     @Published var isPopulating: Bool = false
     @Published var lastError: String?
-    
+
     private let exampleDataFlag = "ExampleDataPopulated"
     private let moods = ["😊","😔","😤","🥰","😰","😌","🤔","😴","🥳","😑","😍","😢","🙄","😎","🤗","😭"]
     private let moodDescriptions = [
@@ -101,15 +101,15 @@ class ExampleDataManager: ObservableObject {
             completion()
             return
         }
-        
+
         print("Starting data population...")
         isPopulating = true
         progress = 0.0
         lastError = nil
-        
+
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             guard let self = self else { return }
-            
+
             // Clear existing data first
             DispatchQueue.main.async {
                 moodVM.moodEntries.removeAll()
@@ -117,16 +117,16 @@ class ExampleDataManager: ObservableObject {
                 exerciseVM.clearAll()
                 quoteVM.clearAll()
             }
-            
+
             // Generate data
             self.generateMoodEntries(moodVM: moodVM)
             self.generateReflections(reflectionVM: reflectionVM)
             self.generateExercises(exerciseVM: exerciseVM)
             self.generateSavedQuotes(quoteVM: quoteVM)
-            
+
             // Save completion state
             UserDefaults.standard.set(true, forKey: self.exampleDataFlag)
-            
+
             // Verify data population
             DispatchQueue.main.async {
                 print("Data population completed")
@@ -134,7 +134,7 @@ class ExampleDataManager: ObservableObject {
                 print("Reflections: \(reflectionVM.reflections.count)")
                 print("Exercises: \(exerciseVM.exerciseHistory.count)")
                 print("Saved quotes: \(quoteVM.savedQuotes.count)")
-                
+
                 self.isPopulating = false
                 self.progress = 1.0
                 completion()
@@ -161,7 +161,7 @@ class ExampleDataManager: ObservableObject {
         print("Generating mood entries...")
         let totalDays = 493
         let startDate = Calendar.current.date(byAdding: .day, value: -totalDays, to: Date())!
-        
+
         for i in 0..<totalDays {
             let date = Calendar.current.date(byAdding: .day, value: i, to: startDate)!
             let season = Calendar.current.component(.month, from: date)
@@ -169,7 +169,7 @@ class ExampleDataManager: ObservableObject {
             let intensity = weightedRandomIntensity(base: baseMood)
             let mood = moods.randomElement()!
             let journal = generateJournalEntry(for: date, mood: mood, intensity: intensity)
-            
+
             DispatchQueue.main.async {
                 let entry = MoodEntry(
                     id: UUID(),
@@ -189,13 +189,13 @@ class ExampleDataManager: ObservableObject {
         print("Generating reflections...")
         let total = 150
         let startDate = Calendar.current.date(byAdding: .day, value: -493, to: Date())!
-        
+
         for i in 0..<total {
             let daysOffset = Int.random(in: 0..<493)
             let date = Calendar.current.date(byAdding: .day, value: daysOffset, to: startDate)!
             let prompt = reflectionPrompts.randomElement()!
             let response = generateReflectionResponse(for: prompt)
-            
+
             DispatchQueue.main.async {
                 reflectionVM.addReflection(date: date, prompt: prompt, response: response)
                 self.progress = 0.25 + Double(i) / Double(total) * 0.25
@@ -208,13 +208,13 @@ class ExampleDataManager: ObservableObject {
         print("Generating exercises...")
         let total = 120
         let startDate = Calendar.current.date(byAdding: .day, value: -493, to: Date())!
-        
+
         for i in 0..<total {
             let daysOffset = Int.random(in: 0..<493)
             let date = Calendar.current.date(byAdding: .day, value: daysOffset, to: startDate)!
             let prompt = exercisePrompts.randomElement()!
             let response = generateExerciseResponse(for: prompt, day: i)
-            
+
             DispatchQueue.main.async {
                 exerciseVM.addExercise(date: date, prompt: prompt, response: response)
                 self.progress = 0.5 + Double(i) / Double(total) * 0.25
@@ -226,7 +226,7 @@ class ExampleDataManager: ObservableObject {
     private func generateSavedQuotes(quoteVM: QuoteViewModel) {
         print("Generating saved quotes...")
         let quotesToSave = stoicQuotes.shuffled().prefix(28)
-        
+
         for (text, author) in quotesToSave {
             let quote = StoicQuote(id: UUID(), text: text, author: author)
             DispatchQueue.main.async {
@@ -347,5 +347,5 @@ class ExampleDataManager: ObservableObject {
         ].randomElement()!
         return base + " " + progression + " " + detail
     }
-} 
-#endif 
+}
+#endif

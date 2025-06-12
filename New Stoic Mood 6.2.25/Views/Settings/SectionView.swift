@@ -4,13 +4,13 @@ struct SectionView: View {
     let title: String
     let content: String
     let themeManager: ThemeManager
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(title)
                 .font(.headline)
                 .foregroundColor(themeManager.textColor)
-            
+
             Text(content)
                 .font(.body)
                 .foregroundColor(themeManager.secondaryTextColor)
@@ -27,4 +27,4 @@ struct SectionView: View {
         themeManager: ThemeManager()
     )
     .padding()
-} 
+}

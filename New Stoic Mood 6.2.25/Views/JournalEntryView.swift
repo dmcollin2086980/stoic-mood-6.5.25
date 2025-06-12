@@ -4,15 +4,15 @@ import Speech
 struct JournalEntryView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var themeManager: ThemeManager
-    
+
     let mood: Mood
     let intensity: Double
     let onSave: (String) -> Void
-    
+
     @State private var journalText = ""
     @State private var isRecording = false
     @State private var showingPermissionAlert = false
-    
+
     var body: some View {
         NavigationView {
             VStack(spacing: Theme.padding) {
@@ -30,7 +30,7 @@ struct JournalEntryView: View {
                 .padding()
                 .background(themeManager.cardBackgroundColor)
                 .cornerRadius(ThemeManager.cornerRadius)
-                
+
                 // Journal Text Editor
                 TextEditor(text: $journalText)
                     .frame(maxHeight: .infinity)
@@ -38,7 +38,7 @@ struct JournalEntryView: View {
                     .background(themeManager.cardBackgroundColor)
                     .cornerRadius(ThemeManager.cornerRadius)
                     .foregroundColor(themeManager.textColor)
-                
+
                 // Voice Recording Button
                 HStack {
                     Button(action: {
@@ -52,7 +52,7 @@ struct JournalEntryView: View {
                             .font(.system(size: 44))
                             .foregroundColor(isRecording ? .red : themeManager.accentColor)
                     }
-                    
+
                     if isRecording {
                         Text("Recording...")
                             .foregroundColor(themeManager.textColor)
@@ -71,7 +71,7 @@ struct JournalEntryView: View {
                     }
                     .foregroundColor(themeManager.textColor)
                 }
-                
+
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Save") {
                         onSave(journalText)
@@ -92,12 +92,12 @@ struct JournalEntryView: View {
             }
         }
     }
-    
+
     private func startRecording() {
         // TODO: Implement voice recording
         isRecording = true
     }
-    
+
     private func stopRecording() {
         // TODO: Implement voice recording
         isRecording = false
@@ -107,4 +107,4 @@ struct JournalEntryView: View {
 #Preview {
     JournalEntryView(mood: .happy, intensity: 0.8) { _ in }
         .environmentObject(ThemeManager())
-} 
+}

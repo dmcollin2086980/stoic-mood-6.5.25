@@ -4,12 +4,12 @@ struct QuotesView: View {
     @EnvironmentObject private var themeManager: ThemeManager
     @EnvironmentObject private var quoteVM: QuoteViewModel
     @State private var selectedQuote: StoicQuote?
-    
+
     var body: some View {
         NavigationView {
             ZStack {
                 themeManager.backgroundColor.ignoresSafeArea()
-                
+
                 List {
                     Section {
                         NavigationLink(destination: QuoteOfTheDayView()) {
@@ -23,7 +23,7 @@ struct QuotesView: View {
                             }
                         }
                     }
-                    
+
                     Section("Saved Quotes") {
                         if quoteVM.savedQuotes.isEmpty {
                             Text("No saved quotes yet")
@@ -65,4 +65,4 @@ struct QuotesView: View {
     QuotesView()
         .environmentObject(ThemeManager())
         .environmentObject(QuoteViewModel())
-} 
+}

@@ -6,7 +6,7 @@ enum JournalFilter: String, CaseIterable {
     case thisWeek = "This Week"
     case thisMonth = "This Month"
     case thisYear = "This Year"
-    
+
     /// The display title for the filter
     var title: String {
         switch self {
@@ -24,7 +24,7 @@ enum ExportFormat: String, CaseIterable {
     case csv = "CSV"
     case json = "JSON"
     case markdown = "Markdown"
-    
+
     /// The display title for the export format
     var title: String {
         switch self {
@@ -34,7 +34,7 @@ enum ExportFormat: String, CaseIterable {
         case .markdown: return "Markdown File"
         }
     }
-    
+
     /// The description of the export format
     var description: String {
         switch self {
@@ -44,7 +44,7 @@ enum ExportFormat: String, CaseIterable {
         case .markdown: return "Export as a readable markdown file"
         }
     }
-    
+
     /// The file extension for the export format
     var fileExtension: String {
         switch self {
@@ -61,9 +61,9 @@ enum TimeRange: String, CaseIterable, Identifiable {
     case week = "Week"
     case month = "Month"
     case year = "Year"
-    
+
     var id: String { rawValue }
-    
+
     var displayName: String {
         switch self {
         case .week: return "This Week"
@@ -91,4 +91,4 @@ enum InsightType: String, CaseIterable {
     case moodFlow = "Mood Flow"
     case moodDistribution = "Mood Distribution"
     case timePatterns = "Time Patterns"
-} 
+}

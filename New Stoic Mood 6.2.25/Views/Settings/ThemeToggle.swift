@@ -2,7 +2,7 @@ import SwiftUI
 
 struct ThemeToggle: View {
     @EnvironmentObject private var themeManager: ThemeManager
-    
+
     var body: some View {
         Button {
             themeManager.toggleTheme()
@@ -10,12 +10,12 @@ struct ThemeToggle: View {
             HStack {
                 Image(systemName: themeManager.isDarkMode ? "sun.max" : "moon")
                     .foregroundColor(themeManager.accentColor)
-                
+
                 Text(themeManager.isDarkMode ? "Light Mode" : "Dark Mode")
                     .foregroundColor(themeManager.textColor)
-                
+
                 Spacer()
-                
+
                 Image(systemName: "chevron.right")
                     .foregroundColor(themeManager.secondaryTextColor)
             }
@@ -30,4 +30,4 @@ struct ThemeToggle: View {
     ThemeToggle()
         .environmentObject(ThemeManager())
         .padding()
-} 
+}

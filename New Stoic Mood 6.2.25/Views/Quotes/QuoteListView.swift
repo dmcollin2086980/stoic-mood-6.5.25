@@ -4,7 +4,7 @@ struct QuoteListView: View {
     @EnvironmentObject private var quoteVM: QuoteViewModel
     @EnvironmentObject private var themeManager: ThemeManager
     @State private var selectedQuote: StoicQuote?
-    
+
     var body: some View {
         List {
             ForEach(quoteVM.quotes) { quote in
@@ -41,4 +41,4 @@ struct QuoteListView: View {
             .environmentObject(ThemeManager())
             .environmentObject(QuoteViewModel())
     }
-} 
+}

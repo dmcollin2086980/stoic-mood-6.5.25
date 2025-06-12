@@ -4,20 +4,20 @@ import SwiftUI
 struct InsightCard<Content: View>: View {
     let title: String
     let content: Content
-    
+
     @EnvironmentObject private var themeManager: ThemeManager
-    
+
     init(title: String, @ViewBuilder content: () -> Content) {
         self.title = title
         self.content = content()
     }
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(title)
                 .font(.headline)
                 .foregroundColor(themeManager.textColor)
-            
+
             content
         }
         .padding()
@@ -32,4 +32,4 @@ struct InsightCard<Content: View>: View {
             .foregroundColor(.secondary)
     }
     .environmentObject(ThemeManager())
-} 
+}
