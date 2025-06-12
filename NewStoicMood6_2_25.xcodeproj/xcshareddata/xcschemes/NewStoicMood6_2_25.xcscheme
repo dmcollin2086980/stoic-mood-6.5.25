@@ -18,7 +18,7 @@
                BlueprintIdentifier = "AC82BE462DEE24FB0090D229"
                BuildableName = "New Stoic Mood 6.2.25.app"
                BlueprintName = "New Stoic Mood 6.2.25"
-               ReferencedContainer = "container:New Stoic Mood 6.2.25.xcodeproj">
+               ReferencedContainer = "container:NewStoicMood6_2_25.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -38,7 +38,7 @@
                BlueprintIdentifier = "AC82BE572DEE24FD0090D229"
                BuildableName = "New Stoic Mood 6.2.25Tests.xctest"
                BlueprintName = "New Stoic Mood 6.2.25Tests"
-               ReferencedContainer = "container:New Stoic Mood 6.2.25.xcodeproj">
+               ReferencedContainer = "container:NewStoicMood6_2_25.xcodeproj">
             </BuildableReference>
          </TestableReference>
          <TestableReference
@@ -49,7 +49,7 @@
                BlueprintIdentifier = "AC82BE612DEE24FD0090D229"
                BuildableName = "New Stoic Mood 6.2.25UITests.xctest"
                BlueprintName = "New Stoic Mood 6.2.25UITests"
-               ReferencedContainer = "container:New Stoic Mood 6.2.25.xcodeproj">
+               ReferencedContainer = "container:NewStoicMood6_2_25.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -71,7 +71,7 @@
             BlueprintIdentifier = "AC82BE462DEE24FB0090D229"
             BuildableName = "New Stoic Mood 6.2.25.app"
             BlueprintName = "New Stoic Mood 6.2.25"
-            ReferencedContainer = "container:New Stoic Mood 6.2.25.xcodeproj">
+            ReferencedContainer = "container:NewStoicMood6_2_25.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -88,7 +88,7 @@
             BlueprintIdentifier = "AC82BE462DEE24FB0090D229"
             BuildableName = "New Stoic Mood 6.2.25.app"
             BlueprintName = "New Stoic Mood 6.2.25"
-            ReferencedContainer = "container:New Stoic Mood 6.2.25.xcodeproj">
+            ReferencedContainer = "container:NewStoicMood6_2_25.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
