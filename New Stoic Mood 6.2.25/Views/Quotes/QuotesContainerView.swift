@@ -7,23 +7,23 @@ struct QuotesContainerView: View {
     @State private var searchText = ""
     @State private var newQuoteText = ""
     @State private var newQuoteAuthor = ""
-    
+
     private let shadowOpacity: Double = 0.1
     private let shadowRadius: CGFloat = 4
-    
+
     var body: some View {
         ZStack {
             themeManager.backgroundColor.ignoresSafeArea()
-            
+
             VStack(spacing: ThemeManager.padding) {
                 // Search Bar
                 HStack {
                     Image(systemName: "magnifyingglass")
                         .foregroundColor(themeManager.secondaryTextColor)
-                    
+
                     TextField("Search quotes...", text: $searchText)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
-                    
+
                     if !searchText.isEmpty {
                         Button {
                             searchText = ""
@@ -36,7 +36,7 @@ struct QuotesContainerView: View {
                 .padding()
                 .background(themeManager.cardBackgroundColor)
                 .cornerRadius(ThemeManager.cornerRadius)
-                
+
                 // Quotes List
                 ScrollView {
                     LazyVStack(spacing: ThemeManager.padding) {
@@ -97,7 +97,7 @@ struct QuotesContainerView: View {
             }
         }
     }
-    
+
     private var filteredQuotes: [StoicQuote] {
         if searchText.isEmpty {
             return quoteVM.quotes
@@ -116,4 +116,4 @@ struct QuotesContainerView: View {
             .environmentObject(QuoteViewModel())
             .environmentObject(ThemeManager())
     }
-} 
+}

@@ -3,10 +3,10 @@ import SwiftUI
 struct QuoteCard: View {
     let quote: StoicQuote
     @EnvironmentObject private var themeManager: ThemeManager
-    
+
     private let shadowOpacity: Double = 0.1
     private let shadowRadius: CGFloat = 4
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: ThemeManager.padding) {
             Text(quote.text)
@@ -14,7 +14,7 @@ struct QuoteCard: View {
                 .italic()
                 .foregroundColor(themeManager.textColor)
                 .multilineTextAlignment(.leading)
-            
+
             Text("- \(quote.author)")
                 .font(.subheadline)
                 .foregroundColor(themeManager.secondaryTextColor)
@@ -41,4 +41,4 @@ struct QuoteCard: View {
     )
     .environmentObject(ThemeManager())
     .padding()
-} 
+}

@@ -9,9 +9,9 @@ enum ThemeType: String, CaseIterable, Identifiable {
     case midnightDeep = "Midnight Deep"
     case pureLight = "Pure Light"
     case goldenWisdom = "Golden Wisdom"
-    
+
     var id: String { rawValue }
-    
+
     var description: String {
         switch self {
         case .classicStoic:
@@ -40,53 +40,53 @@ class ThemeManager: ObservableObject {
     static let spacing: CGFloat = 16
     static let padding: CGFloat = 16
     static let smallPadding: CGFloat = 8
-    
+
     @Published var currentTheme: ThemeType {
         didSet {
             UserDefaults.standard.set(currentTheme.rawValue, forKey: "selectedTheme")
         }
     }
-    
+
     @Published var isDarkMode: Bool {
         didSet {
             UserDefaults.standard.set(isDarkMode, forKey: "isDarkMode")
         }
     }
-    
+
     init() {
         let savedTheme = UserDefaults.standard.string(forKey: "selectedTheme") ?? ThemeType.classicStoic.rawValue
         self.currentTheme = ThemeType(rawValue: savedTheme) ?? .classicStoic
         self.isDarkMode = UserDefaults.standard.bool(forKey: "isDarkMode")
     }
-    
+
     func toggleTheme() {
         withAnimation {
             isDarkMode.toggle()
         }
     }
-    
+
     // MARK: - Theme Colors
-    
+
     var backgroundColor: Color {
         isDarkMode ? Color.black : Color.white
     }
-    
+
     var cardBackgroundColor: Color {
         isDarkMode ? Color(white: 0.1) : Color(white: 0.95)
     }
-    
+
     var textColor: Color {
         isDarkMode ? Color.white : Color.black
     }
-    
+
     var secondaryTextColor: Color {
         isDarkMode ? Color.gray : Color.gray
     }
-    
+
     var accentColor: Color {
         Color.blue
     }
-    
+
     var buttonColor: Color {
         switch currentTheme {
         case .classicStoic:
@@ -107,7 +107,7 @@ class ThemeManager: ObservableObject {
             return Color(hex: "D4AF37")
         }
     }
-    
+
     var disabledButtonColor: Color {
         switch currentTheme {
         case .classicStoic:
@@ -128,7 +128,7 @@ class ThemeManager: ObservableObject {
             return Color(hex: "D3C5B5")
         }
     }
-    
+
     var borderColor: Color {
         switch currentTheme {
         case .classicStoic:
@@ -149,7 +149,7 @@ class ThemeManager: ObservableObject {
             return Color(hex: "E6D5C3")
         }
     }
-    
+
     var dividerColor: Color {
         switch currentTheme {
         case .classicStoic:
@@ -170,9 +170,9 @@ class ThemeManager: ObservableObject {
             return Color(hex: "F0E6D5")
         }
     }
-    
+
     // MARK: - Theme Preview Colors
-    
+
     func previewColors(for theme: ThemeType) -> [Color] {
         switch theme {
         case .classicStoic:
@@ -261,4 +261,4 @@ extension Color {
             opacity: Double(a) / 255
         )
     }
-} 
+}

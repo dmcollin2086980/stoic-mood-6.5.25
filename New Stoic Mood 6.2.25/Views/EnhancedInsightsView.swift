@@ -4,7 +4,7 @@ import Charts
 // MARK: - Chart Components
 struct MoodBarMark: ChartContent {
     let data: MoodDistributionData
-    
+
     var body: some ChartContent {
         BarMark(
             x: .value("Mood", data.mood),
@@ -17,7 +17,7 @@ struct MoodBarMark: ChartContent {
 // MARK: - Time Range Picker
 struct TimeRangePickerView: View {
     @Binding var selectedTimeRange: TimeRange
-    
+
     var body: some View {
         Picker("Time Range", selection: $selectedTimeRange) {
             ForEach(TimeRange.allCases) { range in
@@ -32,7 +32,7 @@ struct TimeRangePickerView: View {
 // MARK: - Export Menu
 struct ExportMenuView: View {
     let onExport: (ExportFormat) -> Void
-    
+
     var body: some View {
         Menu {
             Button(action: { onExport(.pdf) }) {
@@ -51,7 +51,7 @@ struct ExportMenuView: View {
 struct TimePatternIcon: View {
     let icon: String
     @EnvironmentObject private var themeManager: ThemeManager
-    
+
     var body: some View {
         Image(systemName: icon)
             .font(.title2)
@@ -64,7 +64,7 @@ struct TimePatternContent: View {
     let title: String
     let description: String
     @EnvironmentObject private var themeManager: ThemeManager
-    
+
     var body: some View {
         VStack(alignment: .leading) {
             Text(title)
@@ -83,7 +83,7 @@ struct InsightTimePatternCard: View {
     let description: String
     let icon: String
     @EnvironmentObject var themeManager: ThemeManager
-    
+
     var body: some View {
         HStack(spacing: 16) {
             Image(systemName: icon)
@@ -92,17 +92,17 @@ struct InsightTimePatternCard: View {
                 .frame(width: 40, height: 40)
                 .background(themeManager.accentColor.opacity(0.1))
                 .clipShape(Circle())
-            
+
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
                     .font(.headline)
                     .foregroundColor(themeManager.textColor)
-                
+
                 Text(description)
                     .font(.subheadline)
                     .foregroundColor(themeManager.secondaryTextColor)
             }
-            
+
             Spacer()
         }
         .padding()
@@ -115,13 +115,13 @@ struct InsightTimePatternCard: View {
 struct TimePatternsSectionView: View {
     let patterns: [TimePatternData]
     @EnvironmentObject private var themeManager: ThemeManager
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Time Patterns")
                 .font(.headline)
                 .foregroundColor(themeManager.textColor)
-            
+
             ForEach(patterns) { pattern in
                 EnhancedTimePatternCard(pattern: pattern)
             }
@@ -133,7 +133,7 @@ struct TimePatternsSectionView: View {
 struct EnhancedTimePatternCard: View {
     let pattern: TimePatternData
     @EnvironmentObject private var themeManager: ThemeManager
-    
+
     var body: some View {
         HStack(spacing: 16) {
             Image(systemName: pattern.icon)
@@ -142,17 +142,17 @@ struct EnhancedTimePatternCard: View {
                 .frame(width: 40, height: 40)
                 .background(themeManager.accentColor.opacity(0.1))
                 .clipShape(Circle())
-            
+
             VStack(alignment: .leading, spacing: 4) {
                 Text(pattern.title)
                     .font(.headline)
                     .foregroundColor(themeManager.textColor)
-                
+
                 Text(pattern.description)
                     .font(.subheadline)
                     .foregroundColor(themeManager.secondaryTextColor)
             }
-            
+
             Spacer()
         }
         .padding()
@@ -164,13 +164,13 @@ struct EnhancedTimePatternCard: View {
 struct MoodDistributionSectionView: View {
     let data: [MoodDistributionData]
     @EnvironmentObject private var themeManager: ThemeManager
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Mood Distribution")
                 .font(.headline)
                 .foregroundColor(themeManager.textColor)
-            
+
             Chart {
                 ForEach(data) { data in
                     MoodBarMark(data: data)
@@ -185,13 +185,13 @@ struct MoodDistributionSectionView: View {
 struct GrowthInsightsSectionView: View {
     let insights: [GrowthInsight]
     @EnvironmentObject private var themeManager: ThemeManager
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Growth Insights")
                 .font(.headline)
                 .foregroundColor(themeManager.textColor)
-            
+
             ForEach(insights) { insight in
                 GrowthInsightCard(insight: insight)
             }
@@ -207,7 +207,7 @@ struct EnhancedInsightsView: View {
     @State private var showingTimeRangePicker = false
     @State private var selectedInsight: InsightType = .moodFlow
     @State private var showingInsightPicker = false
-    
+
     // Sample data - replace with real data from your data model
     private let moodFlowData: [MoodFlowData] = [
         MoodFlowData(date: Calendar.current.date(byAdding: .day, value: -6, to: Date())!, value: 7),
@@ -218,14 +218,14 @@ struct EnhancedInsightsView: View {
         MoodFlowData(date: Calendar.current.date(byAdding: .day, value: -1, to: Date())!, value: 8),
         MoodFlowData(date: Date(), value: 7)
     ]
-    
+
     private let moodDistributionData: [MoodDistributionData] = [
         MoodDistributionData(mood: "Happy", count: 12),
         MoodDistributionData(mood: "Calm", count: 8),
         MoodDistributionData(mood: "Anxious", count: 5),
         MoodDistributionData(mood: "Sad", count: 3)
     ]
-    
+
     private let timePatterns: [TimePatternData] = [
         TimePatternData(
             icon: "sunrise.fill",
@@ -249,7 +249,7 @@ struct EnhancedInsightsView: View {
             count: 4
         )
     ]
-    
+
     private let growthInsights: [GrowthInsight] = [
         GrowthInsight(
             title: "Consistency Improvement",
@@ -262,13 +262,13 @@ struct EnhancedInsightsView: View {
             progress: 0.15
         )
     ]
-    
+
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 20) {
                     TimeRangePickerView(selectedTimeRange: $selectedTimeRange)
-                    
+
                     switch selectedInsight {
                     case .moodFlow:
                         MoodFlowView(data: moodFlowData)
@@ -277,7 +277,7 @@ struct EnhancedInsightsView: View {
                     case .timePatterns:
                         TimePatternsSectionView(patterns: timePatterns)
                     }
-                    
+
                     GrowthInsightsSectionView(insights: growthInsights)
                 }
                 .padding()
@@ -303,7 +303,7 @@ struct EnhancedInsightsView: View {
 struct ExportButton: View {
     @EnvironmentObject private var themeManager: ThemeManager
     @Binding var showingMenu: Bool
-    
+
     var body: some View {
         Button {
             showingMenu = true
@@ -319,4 +319,4 @@ struct ExportButton: View {
         EnhancedInsightsView()
             .environmentObject(ThemeManager())
     }
-} 
+}

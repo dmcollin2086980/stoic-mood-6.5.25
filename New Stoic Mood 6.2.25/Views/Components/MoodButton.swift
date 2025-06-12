@@ -5,13 +5,13 @@ struct MoodButton: View {
     let isSelected: Bool
     let action: () -> Void
     @EnvironmentObject private var themeManager: ThemeManager
-    
+
     var body: some View {
         Button(action: action) {
             VStack(spacing: 8) {
                 Text(mood.emoji)
                     .font(.system(size: 32))
-                
+
                 Text(mood.name)
                     .font(.caption)
                     .foregroundColor(themeManager.textColor)
@@ -23,15 +23,15 @@ struct MoodButton: View {
             .padding(.horizontal, 8)
             .background(
                 RoundedRectangle(cornerRadius: ThemeManager.cornerRadius)
-                    .fill(isSelected ? 
-                        themeManager.accentColor.opacity(0.2) : 
+                    .fill(isSelected ?
+                        themeManager.accentColor.opacity(0.2) :
                         themeManager.cardBackgroundColor)
             )
             .overlay(
                 RoundedRectangle(cornerRadius: ThemeManager.cornerRadius)
-                    .stroke(isSelected ? 
-                        themeManager.accentColor : 
-                        themeManager.borderColor, 
+                    .stroke(isSelected ?
+                        themeManager.accentColor :
+                        themeManager.borderColor,
                         lineWidth: 1)
             )
         }
@@ -46,7 +46,7 @@ struct MoodButton: View {
             isSelected: true,
             action: {}
         )
-        
+
         MoodButton(
             mood: .calm,
             isSelected: false,
@@ -55,4 +55,4 @@ struct MoodButton: View {
     }
     .environmentObject(ThemeManager())
     .padding()
-} 
+}

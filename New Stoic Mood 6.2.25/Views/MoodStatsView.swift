@@ -4,7 +4,7 @@ import Charts
 struct MoodStatsView: View {
     @EnvironmentObject private var viewModel: MoodViewModel
     @EnvironmentObject private var themeManager: ThemeManager
-    
+
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
@@ -13,7 +13,7 @@ struct MoodStatsView: View {
                     Text("Mood Distribution")
                         .font(.headline)
                         .foregroundColor(themeManager.textColor)
-                    
+
                     let stats = viewModel.getMoodStats()
                     HStack(spacing: 20) {
                         VStack(alignment: .leading) {
@@ -23,7 +23,7 @@ struct MoodStatsView: View {
                                 .font(.title2)
                                 .bold()
                         }
-                        
+
                         VStack(alignment: .leading) {
                             Text("Neutral")
                                 .foregroundColor(.blue)
@@ -31,7 +31,7 @@ struct MoodStatsView: View {
                                 .font(.title2)
                                 .bold()
                         }
-                        
+
                         VStack(alignment: .leading) {
                             Text("Negative")
                                 .foregroundColor(.red)
@@ -44,18 +44,18 @@ struct MoodStatsView: View {
                     .background(themeManager.cardBackgroundColor)
                     .cornerRadius(ThemeManager.cornerRadius)
                 }
-                
+
                 // Average Intensity
                 VStack(alignment: .leading, spacing: 10) {
                     Text("Average Intensity")
                         .font(.headline)
                         .foregroundColor(themeManager.textColor)
-                    
+
                     let stats = viewModel.getMoodStats()
                     HStack {
                         Text(String(repeating: "⭐️", count: Int(round(stats.averageIntensity))))
                             .font(.title)
-                        
+
                         Text(String(format: "%.1f", stats.averageIntensity))
                             .font(.title2)
                             .bold()
@@ -65,18 +65,18 @@ struct MoodStatsView: View {
                     .background(themeManager.cardBackgroundColor)
                     .cornerRadius(ThemeManager.cornerRadius)
                 }
-                
+
                 // Most Common Mood
                 if let mostCommon = viewModel.getMoodStats().mostCommonMood {
                     VStack(alignment: .leading, spacing: 10) {
                         Text("Most Common Mood")
                             .font(.headline)
                             .foregroundColor(themeManager.textColor)
-                        
+
                         HStack {
                             Text(mostCommon.emoji)
                                 .font(.title)
-                            
+
                             Text(mostCommon.name)
                                 .font(.title2)
                                 .bold()
@@ -87,36 +87,36 @@ struct MoodStatsView: View {
                         .cornerRadius(ThemeManager.cornerRadius)
                     }
                 }
-                
+
                 // Recent Entries
                 VStack(alignment: .leading, spacing: 10) {
                     Text("Recent Entries")
                         .font(.headline)
                         .foregroundColor(themeManager.textColor)
-                    
+
                     ForEach(viewModel.moodEntries.prefix(5)) { entry in
                         HStack {
                             Text(entry.mood.emoji)
                                 .font(.title2)
-                            
+
                             VStack(alignment: .leading) {
                                 Text(entry.mood.name)
                                     .font(.headline)
-                                
+
                                 if let journal = entry.journalEntry {
                                     Text(journal)
                                         .font(.subheadline)
                                         .foregroundColor(themeManager.textColor.opacity(0.8))
                                         .lineLimit(2)
                                 }
-                                
+
                                 Text(entry.formattedDate)
                                     .font(.caption)
                                     .foregroundColor(themeManager.textColor.opacity(0.6))
                             }
-                            
+
                             Spacer()
-                            
+
                             Text(entry.formattedIntensity)
                                 .font(.caption)
                         }
@@ -139,4 +139,4 @@ struct MoodStatsView: View {
             .environmentObject(MoodViewModel())
             .environmentObject(ThemeManager())
     }
-} 
+}

@@ -10,11 +10,11 @@ struct DailyExerciseView: View {
     @State private var showingHistory = false
     @State private var selectedPrompt: String?
     @State private var showingPrompts = false
-    
+
     var body: some View {
         ZStack {
             themeManager.backgroundColor.ignoresSafeArea()
-            
+
             ScrollView {
                 VStack(spacing: ThemeManager.padding) {
                     // Header with Quote
@@ -28,13 +28,13 @@ struct DailyExerciseView: View {
                             .cornerRadius(ThemeManager.cornerRadius)
                             .accessibilityLabel("Daily Stoic Quote")
                     }
-                    
+
                     // Exercise Content
                     VStack(alignment: .leading, spacing: ThemeManager.padding) {
                         Text("Today's Exercise")
                             .font(.headline)
                             .foregroundColor(themeManager.textColor)
-                        
+
                         Text(viewModel.currentExercise.exercise)
                             .font(.body)
                             .foregroundColor(themeManager.secondaryTextColor)
@@ -43,20 +43,20 @@ struct DailyExerciseView: View {
                             .cornerRadius(ThemeManager.cornerRadius)
                             .accessibilityLabel("Exercise Description")
                     }
-                    
+
                     // Action Steps
                     VStack(alignment: .leading, spacing: ThemeManager.padding) {
                         Text("Action Steps")
                             .font(.headline)
                             .foregroundColor(themeManager.textColor)
-                        
+
                         ForEach(viewModel.currentExercise.steps, id: \.self) { step in
                             HStack(alignment: .top, spacing: ThemeManager.smallPadding) {
                                 Image(systemName: "circle.fill")
                                     .font(.system(size: 8))
                                     .foregroundColor(themeManager.accentColor)
                                     .padding(.top, 6)
-                                
+
                                 Text(step)
                                     .font(.body)
                                     .foregroundColor(themeManager.secondaryTextColor)
@@ -67,12 +67,12 @@ struct DailyExerciseView: View {
                     .background(themeManager.cardBackgroundColor)
                     .cornerRadius(ThemeManager.cornerRadius)
                     .accessibilityLabel("Exercise Steps")
-                    
+
                     // Reflection Section
                     if viewModel.isExerciseComplete {
                         ExerciseReflectionView(viewModel: viewModel, showingSaveAlert: $showingSaveAlert)
                     }
-                    
+
                     // Complete Button
                     if !viewModel.isExerciseComplete {
                         Button {
@@ -128,7 +128,7 @@ class DailyExerciseViewModel: ObservableObject {
     @Published var currentExercise: StoicExercise
     @Published var isExerciseComplete = false
     @Published var reflectionText: String = ""
-    
+
     init() {
         // Initialize currentExercise
         self.currentExercise = StoicExercise(
@@ -146,7 +146,7 @@ class DailyExerciseViewModel: ObservableObject {
             ]
         )
     }
-    
+
     func completeExercise() {
         isExerciseComplete = true
     }
@@ -159,20 +159,20 @@ struct ExerciseReflectionView: View {
     @Binding var showingSaveAlert: Bool
     @State private var showingPrompts = false
     @State private var selectedPrompt: String?
-    
+
     var body: some View {
         VStack(spacing: ThemeManager.padding) {
             Text("Reflection Prompt")
                 .font(.headline)
                 .foregroundColor(themeManager.textColor)
-            
+
             TextEditor(text: $viewModel.reflectionText)
                 .frame(height: 120)
                 .padding()
                 .background(themeManager.cardBackgroundColor)
                 .cornerRadius(ThemeManager.cornerRadius)
                 .foregroundColor(themeManager.textColor)
-            
+
             Button("Save Reflection") {
                 if !viewModel.reflectionText.isEmpty {
                     reflectionVM.addReflection(
@@ -202,4 +202,4 @@ struct ExerciseReflectionView: View {
         .environmentObject(ThemeManager())
         .environmentObject(ReflectionViewModel())
         .environmentObject(ExerciseViewModel())
-} 
+}

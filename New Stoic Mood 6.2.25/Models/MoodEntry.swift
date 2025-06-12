@@ -6,7 +6,7 @@ struct MoodEntry: Identifiable, Codable {
     let intensity: Int // 1-5 scale
     let timestamp: Date
     let journalEntry: String?
-    
+
     init(id: UUID = UUID(), mood: Mood, intensity: Int = 3, timestamp: Date = Date(), journalEntry: String? = nil) {
         self.id = id
         self.mood = mood
@@ -14,14 +14,14 @@ struct MoodEntry: Identifiable, Codable {
         self.timestamp = timestamp
         self.journalEntry = journalEntry
     }
-    
+
     var formattedDate: String {
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
         formatter.timeStyle = .short
         return formatter.string(from: timestamp)
     }
-    
+
     var formattedIntensity: String {
         return String(repeating: "⭐️", count: intensity)
     }
@@ -48,7 +48,7 @@ enum MoodType: String, Codable, CaseIterable {
     case proud
     case reflective
     case stressed
-    
+
     var emoji: String {
         switch self {
         case .happy: return "😀"
@@ -64,7 +64,7 @@ enum MoodType: String, Codable, CaseIterable {
         case .stressed: return "😵‍💫"
         }
     }
-    
+
     var value: Int {
         switch self {
         case .happy: return 5
@@ -80,11 +80,11 @@ enum MoodType: String, Codable, CaseIterable {
         case .stressed: return 2
         }
     }
-    
+
     var displayName: String {
         rawValue.capitalized
     }
-    
+
     /// Converts this MoodType to a Mood
     var toMood: Mood {
         switch self {
@@ -101,4 +101,4 @@ enum MoodType: String, Codable, CaseIterable {
         case .stressed: return .stressed
         }
     }
-} 
+}

@@ -15,11 +15,11 @@ struct New_Stoic_Mood_6_2_25App: App {
     @StateObject private var quoteVM = QuoteViewModel()
     @StateObject private var themeManager = ThemeManager()
     @State private var showLaunchScreen = true
-    
+
     init() {
         // Initialize any required setup here
     }
-    
+
     private func populateExampleDataIfNeeded() {
         #if DEBUG
         if !UserDefaults.standard.bool(forKey: "ExampleDataPopulated") {
@@ -36,7 +36,7 @@ struct New_Stoic_Mood_6_2_25App: App {
         }
         #endif
     }
-    
+
     var body: some Scene {
         WindowGroup {
             ZStack {

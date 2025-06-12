@@ -14,7 +14,7 @@ enum Mood: String, CaseIterable, Identifiable, Codable {
     case proud
     case reflective
     case stressed
-    
+
     // Quick emoji moods
     case joyful
     case peaceful
@@ -33,10 +33,10 @@ enum Mood: String, CaseIterable, Identifiable, Codable {
     case disappointed
     case grateful_emoji
     case zen
-    
+
     /// A unique identifier for the mood
     var id: String { rawValue }
-    
+
     /// The display name of the mood
     var name: String {
         switch self {
@@ -52,7 +52,7 @@ enum Mood: String, CaseIterable, Identifiable, Codable {
         case .proud: return "Proud"
         case .reflective: return "Reflective"
         case .stressed: return "Stressed"
-        
+
         // Quick emoji moods
         case .joyful: return "Joyful"
         case .peaceful: return "Peaceful"
@@ -73,7 +73,7 @@ enum Mood: String, CaseIterable, Identifiable, Codable {
         case .zen: return "Zen"
         }
     }
-    
+
     /// The emoji representation of the mood
     var emoji: String {
         switch self {
@@ -89,7 +89,7 @@ enum Mood: String, CaseIterable, Identifiable, Codable {
         case .proud: return "🎉"
         case .reflective: return "🥲"
         case .stressed: return "😵‍💫"
-        
+
         // Quick emoji moods
         case .joyful: return "😊"
         case .peaceful: return "😌"
@@ -110,7 +110,7 @@ enum Mood: String, CaseIterable, Identifiable, Codable {
         case .zen: return "😇"
         }
     }
-    
+
     /// The category of the mood
     var category: MoodCategory {
         switch self {
@@ -122,7 +122,7 @@ enum Mood: String, CaseIterable, Identifiable, Codable {
             return .neutral
         }
     }
-    
+
     /// Converts this Mood to a MoodType
     var toMoodType: MoodType {
         switch self {
@@ -147,4 +147,4 @@ enum MoodCategory: String {
     case positive
     case negative
     case neutral
-} 
+}

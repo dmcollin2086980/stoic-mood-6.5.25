@@ -4,15 +4,15 @@ struct MoodCard: View {
     let mood: Mood
     let isSelected: Bool
     let action: () -> Void
-    
+
     @EnvironmentObject private var themeManager: ThemeManager
-    
+
     var body: some View {
         Button(action: action) {
             VStack(spacing: 12) {
                 Text(mood.emoji)
                     .font(.system(size: 32))
-                
+
                 Text(mood.name)
                     .font(.subheadline)
                     .foregroundColor(themeManager.textColor)
@@ -36,4 +36,4 @@ struct MoodCard: View {
         action: {}
     )
     .environmentObject(ThemeManager())
-} 
+}

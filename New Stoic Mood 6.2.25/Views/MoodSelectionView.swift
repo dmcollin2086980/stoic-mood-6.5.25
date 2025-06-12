@@ -9,7 +9,7 @@ struct MoodSelectionView: View {
     @EnvironmentObject private var themeManager: ThemeManager
     @EnvironmentObject private var moodVM: MoodViewModel
     let onMoodSelected: (MoodType, Int) -> Void
-    
+
     private var filteredMoods: [Mood] {
         let categoryMoods = Mood.allCases.filter { $0.category == selectedCategory }
         if searchText.isEmpty {
@@ -17,14 +17,14 @@ struct MoodSelectionView: View {
         }
         return categoryMoods.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
     }
-    
+
     var body: some View {
         NavigationView {
             VStack(spacing: 20) {
                 // Search Bar
                 SearchBar(text: $searchText, placeholder: "Search moods...")
                     .padding(.horizontal)
-                
+
                 // Category Picker
                 Picker("Category", selection: $selectedCategory) {
                     Text("Positive").tag(MoodCategory.positive)
@@ -33,7 +33,7 @@ struct MoodSelectionView: View {
                 }
                 .pickerStyle(.segmented)
                 .padding(.horizontal)
-                
+
                 // Mood Grid
                 ScrollView {
                     LazyVGrid(columns: [
@@ -54,27 +54,27 @@ struct MoodSelectionView: View {
                     }
                     .padding()
                 }
-                
+
                 // Intensity Slider
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Intensity")
                         .font(.headline)
                         .foregroundColor(themeManager.textColor)
-                    
+
                     HStack {
                         Text("1")
                             .foregroundColor(themeManager.secondaryTextColor)
-                        
+
                         Slider(value: Binding(
                             get: { Double(selectedIntensity) },
                             set: { selectedIntensity = Int($0) }
                         ), in: 1...10, step: 1)
                         .accentColor(themeManager.accentColor)
-                        
+
                         Text("10")
                             .foregroundColor(themeManager.secondaryTextColor)
                     }
-                    
+
                     Text("Current: \(selectedIntensity)")
                         .font(.caption)
                         .foregroundColor(themeManager.secondaryTextColor)
@@ -83,7 +83,7 @@ struct MoodSelectionView: View {
                 .background(themeManager.cardBackgroundColor)
                 .cornerRadius(ThemeManager.cornerRadius)
                 .padding(.horizontal)
-                
+
                 // Done Button
                 Button {
                     if let mood = selectedMood {
@@ -119,4 +119,4 @@ struct MoodSelectionView: View {
     MoodSelectionView(onMoodSelected: { _, _ in })
         .environmentObject(ThemeManager())
         .environmentObject(MoodViewModel())
-} 
+}

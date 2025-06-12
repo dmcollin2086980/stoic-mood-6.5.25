@@ -5,34 +5,34 @@ struct SettingsView: View {
     @EnvironmentObject private var moodVM: MoodViewModel
     @EnvironmentObject private var exerciseVM: ExerciseViewModel
     @EnvironmentObject private var quoteVM: QuoteViewModel
-    
+
     var body: some View {
         NavigationView {
             List {
                 Section(header: Text("Appearance")) {
                     ThemeToggle()
                 }
-                
+
                 Section(header: Text("Data Management")) {
                     Button(role: .destructive) {
                         moodVM.clearAllData()
                     } label: {
                         Label("Clear Mood History", systemImage: "trash")
                     }
-                    
+
                     Button(role: .destructive) {
                         exerciseVM.clearAllData()
                     } label: {
                         Label("Clear Exercise History", systemImage: "trash")
                     }
-                    
+
                     Button(role: .destructive) {
                         quoteVM.clearAllData()
                     } label: {
                         Label("Clear Saved Quotes", systemImage: "trash")
                     }
                 }
-                
+
                 Section(header: Text("About")) {
                     HStack {
                         Text("Version")
@@ -54,4 +54,4 @@ struct SettingsView: View {
         .environmentObject(MoodViewModel())
         .environmentObject(ExerciseViewModel())
         .environmentObject(QuoteViewModel())
-} 
+}

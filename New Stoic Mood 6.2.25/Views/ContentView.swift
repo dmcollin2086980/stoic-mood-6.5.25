@@ -4,7 +4,7 @@ struct ContentView: View {
     @EnvironmentObject private var themeManager: ThemeManager
     @EnvironmentObject private var moodVM: MoodViewModel
     @State private var selectedTab = 0
-    
+
     var body: some View {
         TabView(selection: $selectedTab) {
             NavigationView {
@@ -14,7 +14,7 @@ struct ContentView: View {
                 Label("Dashboard", systemImage: "house")
             }
             .tag(0)
-            
+
             NavigationView {
                 MoodSelectionView { moodType, intensity in
                     let mood = moodType.toMood
@@ -29,7 +29,7 @@ struct ContentView: View {
                 Label("Mood", systemImage: "face.smiling")
             }
             .tag(1)
-            
+
             NavigationView {
                 DailyExerciseView()
             }
@@ -37,7 +37,7 @@ struct ContentView: View {
                 Label("Exercise", systemImage: "figure.walk")
             }
             .tag(2)
-            
+
             NavigationView {
                 JournalView()
             }
@@ -45,7 +45,7 @@ struct ContentView: View {
                 Label("Journal", systemImage: "book")
             }
             .tag(3)
-            
+
             NavigationView {
                 SettingsView()
             }
@@ -64,4 +64,4 @@ struct ContentView: View {
         .environmentObject(MoodViewModel())
         .environmentObject(ExerciseViewModel())
         .environmentObject(QuoteViewModel())
-} 
+}

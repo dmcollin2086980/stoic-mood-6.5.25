@@ -3,7 +3,7 @@ import SwiftUI
 struct FloatingAddButton: View {
     @EnvironmentObject private var themeManager: ThemeManager
     let action: () -> Void
-    
+
     var body: some View {
         Button(action: action) {
             Image(systemName: "plus")
@@ -21,4 +21,4 @@ struct FloatingAddButton: View {
 #Preview {
     FloatingAddButton(action: {})
         .environmentObject(ThemeManager())
-} 
+}

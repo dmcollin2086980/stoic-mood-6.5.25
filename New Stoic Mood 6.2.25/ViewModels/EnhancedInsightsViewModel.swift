@@ -5,11 +5,11 @@ class EnhancedInsightsViewModel: ObservableObject {
     @Published var moodDistributionData: [MoodDistributionData] = []
     @Published var timePatterns: [TimePatternData] = []
     @Published var growthInsights: [GrowthInsight] = []
-    
+
     init() {
         loadSampleData()
     }
-    
+
     private func loadSampleData() {
         // Sample mood flow data
         moodFlowData = [
@@ -21,7 +21,7 @@ class EnhancedInsightsViewModel: ObservableObject {
             MoodFlowData(date: Date().addingTimeInterval(-1*86400), value: 4),
             MoodFlowData(date: Date(), value: 5)
         ]
-        
+
         // Sample mood distribution data
         moodDistributionData = [
             MoodDistributionData(mood: "Happy", count: 12),
@@ -29,7 +29,7 @@ class EnhancedInsightsViewModel: ObservableObject {
             MoodDistributionData(mood: "Anxious", count: 5),
             MoodDistributionData(mood: "Sad", count: 3)
         ]
-        
+
         // Sample time patterns
         timePatterns = [
             TimePatternData(
@@ -54,7 +54,7 @@ class EnhancedInsightsViewModel: ObservableObject {
                 count: 3
             )
         ]
-        
+
         // Sample growth insights
         growthInsights = [
             GrowthInsight(
@@ -74,8 +74,8 @@ class EnhancedInsightsViewModel: ObservableObject {
             )
         ]
     }
-    
+
     func exportInsights(format: ExportFormat) {
         // Implementation for exporting insights
     }
-} 
+}

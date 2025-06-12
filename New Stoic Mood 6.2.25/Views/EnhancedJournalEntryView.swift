@@ -7,11 +7,11 @@ struct EnhancedJournalEntryView: View {
     @EnvironmentObject private var themeManager: ThemeManager
     @State private var showingPrompts = false
     @State private var showingMicrophoneAlert = false
-    
+
     init(moodViewModel: MoodViewModel) {
         _viewModel = StateObject(wrappedValue: JournalEntryViewModel(moodViewModel: moodViewModel))
     }
-    
+
     var body: some View {
         NavigationView {
             VStack(spacing: Theme.padding) {
@@ -25,7 +25,7 @@ struct EnhancedJournalEntryView: View {
                         RoundedRectangle(cornerRadius: Theme.cornerRadius)
                             .stroke(themeManager.accentColor, lineWidth: 1)
                     )
-                
+
                 // Voice Recording Button
                 Button(action: {
                     if viewModel.isRecording {
@@ -59,7 +59,7 @@ struct EnhancedJournalEntryView: View {
                     }
                     .foregroundColor(themeManager.textColor)
                 }
-                
+
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Save") {
                         viewModel.saveEntry(mood: .reflective, intensity: 5, content: viewModel.journalText)
@@ -67,7 +67,7 @@ struct EnhancedJournalEntryView: View {
                     }
                     .foregroundColor(themeManager.textColor)
                 }
-                
+
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: { showingPrompts = true }) {
                         Image(systemName: "lightbulb")
@@ -102,4 +102,4 @@ struct EnhancedJournalEntryView: View {
 #Preview {
     EnhancedJournalEntryView(moodViewModel: MoodViewModel())
         .environmentObject(ThemeManager())
-} 
+}

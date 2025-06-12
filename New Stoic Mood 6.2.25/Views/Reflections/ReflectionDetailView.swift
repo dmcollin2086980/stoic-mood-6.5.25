@@ -3,7 +3,7 @@ import SwiftUI
 struct ReflectionDetailView: View {
     let reflection: Reflection
     @EnvironmentObject private var themeManager: ThemeManager
-    
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
@@ -11,25 +11,25 @@ struct ReflectionDetailView: View {
                 Text(reflection.date.formatted(date: .long, time: .shortened))
                     .font(.subheadline)
                     .foregroundColor(themeManager.secondaryTextColor)
-                
+
                 // Exercise Prompt
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Exercise Prompt:")
                         .font(.headline)
                         .foregroundColor(themeManager.textColor)
-                    
+
                     Text(reflection.exercisePrompt)
                         .font(.body)
                         .foregroundColor(themeManager.secondaryTextColor)
                         .italic()
                 }
-                
+
                 // Reflection Content
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Your Reflection:")
                         .font(.headline)
                         .foregroundColor(themeManager.textColor)
-                    
+
                     Text(reflection.content)
                         .font(.body)
                         .foregroundColor(themeManager.textColor)
@@ -54,4 +54,4 @@ struct ReflectionDetailView: View {
         )
         .environmentObject(ThemeManager())
     }
-} 
+}

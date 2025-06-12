@@ -4,7 +4,7 @@ struct QuoteOfTheDayView: View {
     @EnvironmentObject private var quoteVM: QuoteViewModel
     @EnvironmentObject private var themeManager: ThemeManager
     @State private var isAnimating = false
-    
+
     var body: some View {
         VStack(spacing: 20) {
             // Quote Card
@@ -12,7 +12,7 @@ struct QuoteOfTheDayView: View {
                 .padding(.horizontal)
                 .scaleEffect(isAnimating ? 1.05 : 1.0)
                 .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isAnimating)
-            
+
             // Action Buttons
             HStack(spacing: 20) {
                 ActionButton(
@@ -20,7 +20,7 @@ struct QuoteOfTheDayView: View {
                     label: "Save",
                     action: { quoteVM.saveQuote(quoteVM.dailyQuote) }
                 )
-                
+
                 ActionButton(
                     icon: "square.and.arrow.up",
                     label: "Share",
@@ -42,7 +42,7 @@ private struct ActionButton: View {
     let label: String
     let action: () -> Void
     @EnvironmentObject private var themeManager: ThemeManager
-    
+
     var body: some View {
         Button(action: action) {
             VStack(spacing: 8) {
@@ -64,4 +64,4 @@ private struct ActionButton: View {
     QuoteOfTheDayView()
         .environmentObject(ThemeManager())
         .environmentObject(QuoteViewModel())
-} 
+}

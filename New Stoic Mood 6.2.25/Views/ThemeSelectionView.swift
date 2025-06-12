@@ -3,17 +3,17 @@ import SwiftUI
 struct ThemeSelectionView: View {
     @EnvironmentObject private var themeManager: ThemeManager
     @Environment(\.dismiss) private var dismiss
-    
+
     private let columns = [
         GridItem(.flexible()),
         GridItem(.flexible())
     ]
-    
+
     var body: some View {
         NavigationView {
             ZStack {
                 themeManager.backgroundColor.ignoresSafeArea()
-                
+
                 ScrollView {
                     LazyVGrid(columns: columns, spacing: 16) {
                         ForEach(ThemeType.allCases) { theme in
@@ -50,7 +50,7 @@ struct ThemePreviewCard: View {
     let isSelected: Bool
     let colors: [Color]
     @EnvironmentObject private var themeManager: ThemeManager
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             // Color Swatches
@@ -61,18 +61,18 @@ struct ThemePreviewCard: View {
                         .cornerRadius(4)
                 }
             }
-            
+
             // Theme Name
             Text(theme.rawValue)
                 .font(.headline)
                 .foregroundColor(themeManager.textColor)
-            
+
             // Theme Description
             Text(theme.description)
                 .font(.caption)
                 .foregroundColor(themeManager.secondaryTextColor)
                 .lineLimit(2)
-            
+
             // Selection Indicator
             if isSelected {
                 HStack {
@@ -97,4 +97,4 @@ struct ThemePreviewCard: View {
 #Preview {
     ThemeSelectionView()
         .environmentObject(ThemeManager())
-} 
+}

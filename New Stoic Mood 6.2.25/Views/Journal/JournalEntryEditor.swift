@@ -4,7 +4,7 @@ struct JournalEntryEditor: View {
     @EnvironmentObject private var themeManager: ThemeManager
     @Binding var text: String
     let placeholder: String
-    
+
     var body: some View {
         ZStack(alignment: .topLeading) {
             TextEditor(text: $text)
@@ -17,7 +17,7 @@ struct JournalEntryEditor: View {
                     RoundedRectangle(cornerRadius: 8)
                         .stroke(themeManager.borderColor, lineWidth: 1)
                 )
-            
+
             if text.isEmpty {
                 Text(placeholder)
                     .foregroundColor(themeManager.secondaryTextColor)
@@ -36,4 +36,4 @@ struct JournalEntryEditor: View {
     )
     .environmentObject(ThemeManager())
     .padding()
-} 
+}
