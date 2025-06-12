@@ -25,4 +25,5 @@ struct LaunchScreenView_Previews: PreviewProvider {
     static var previews: some View {
         LaunchScreenView()
     }
-} 
+}
+

@@ -41,4 +41,5 @@ struct QuoteCard: View {
     )
     .environmentObject(ThemeManager())
     .padding()
-} 
+}
+

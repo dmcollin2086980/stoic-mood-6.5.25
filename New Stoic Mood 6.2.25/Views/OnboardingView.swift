@@ -167,4 +167,5 @@ struct OnboardingPageView: View {
 #Preview {
     OnboardingView()
         .environmentObject(ThemeManager())
-} 
+}
+

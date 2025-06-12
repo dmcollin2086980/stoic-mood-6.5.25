@@ -21,4 +21,5 @@ struct FloatingAddButton: View {
 #Preview {
     FloatingAddButton(action: {})
         .environmentObject(ThemeManager())
-} 
+}
+

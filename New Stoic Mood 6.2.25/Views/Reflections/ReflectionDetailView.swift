@@ -54,4 +54,5 @@ struct ReflectionDetailView: View {
         )
         .environmentObject(ThemeManager())
     }
-} 
+}
+

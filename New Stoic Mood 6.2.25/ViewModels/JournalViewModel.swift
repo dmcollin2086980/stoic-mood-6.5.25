@@ -55,4 +55,5 @@ class JournalViewModel: ObservableObject {
             saveEntries()
         }
     }
-} 
+}
+

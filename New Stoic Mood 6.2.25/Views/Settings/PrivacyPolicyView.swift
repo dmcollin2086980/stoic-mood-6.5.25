@@ -54,4 +54,5 @@ struct PrivacyPolicyView: View {
         PrivacyPolicyView()
             .environmentObject(ThemeManager())
     }
-} 
+}
+

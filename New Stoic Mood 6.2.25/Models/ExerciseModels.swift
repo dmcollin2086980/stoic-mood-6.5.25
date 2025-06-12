@@ -23,4 +23,5 @@ struct ExerciseEntry: Identifiable, Codable {
         self.response = response
         self.timestamp = timestamp
     }
-} 
+}
+

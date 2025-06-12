@@ -70,4 +70,5 @@ struct ReflectionHistoryView: View {
             .environmentObject(ReflectionViewModel())
             .environmentObject(ThemeManager())
     }
-} 
+}
+

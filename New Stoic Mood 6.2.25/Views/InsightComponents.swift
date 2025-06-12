@@ -460,4 +460,5 @@ struct InsightComponents_Previews: PreviewProvider {
         .padding()
         .environmentObject(ThemeManager())
     }
-} 
+}
+

@@ -124,4 +124,5 @@ class QuoteViewModel: ObservableObject {
         savedQuotes.removeAll()
         saveQuotes()
     }
-} 
+}
+

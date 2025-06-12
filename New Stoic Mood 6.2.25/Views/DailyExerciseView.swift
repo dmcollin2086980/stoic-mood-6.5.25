@@ -202,4 +202,5 @@ struct ExerciseReflectionView: View {
         .environmentObject(ThemeManager())
         .environmentObject(ReflectionViewModel())
         .environmentObject(ExerciseViewModel())
-} 
+}
+

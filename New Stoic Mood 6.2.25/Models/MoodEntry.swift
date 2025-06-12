@@ -101,4 +101,5 @@ enum MoodType: String, Codable, CaseIterable {
         case .stressed: return .stressed
         }
     }
-} 
+}
+

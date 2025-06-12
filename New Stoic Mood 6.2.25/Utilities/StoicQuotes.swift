@@ -31,4 +31,5 @@ class StoicQuotesManager {
         let day = calendar.component(.day, from: Date())
         return quotes[day % quotes.count]
     }
-} 
+}
+

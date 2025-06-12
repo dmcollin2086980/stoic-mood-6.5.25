@@ -86,4 +86,5 @@ class ReflectionViewModel: ObservableObject {
         reflections.removeAll()
         saveReflections()
     }
-} 
+}
+

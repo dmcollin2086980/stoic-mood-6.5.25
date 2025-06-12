@@ -12,4 +12,5 @@ struct Reflection: Identifiable, Codable {
         self.content = content
         self.exercisePrompt = exercisePrompt
     }
-} 
+}
+

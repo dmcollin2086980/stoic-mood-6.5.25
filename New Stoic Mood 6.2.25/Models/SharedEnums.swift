@@ -91,4 +91,5 @@ enum InsightType: String, CaseIterable {
     case moodFlow = "Mood Flow"
     case moodDistribution = "Mood Distribution"
     case timePatterns = "Time Patterns"
-} 
+}
+

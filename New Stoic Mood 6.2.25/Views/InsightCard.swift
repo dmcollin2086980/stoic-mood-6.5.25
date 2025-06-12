@@ -32,4 +32,5 @@ struct InsightCard<Content: View>: View {
             .foregroundColor(.secondary)
     }
     .environmentObject(ThemeManager())
-} 
+}
+

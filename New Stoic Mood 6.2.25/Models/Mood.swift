@@ -147,4 +147,5 @@ enum MoodCategory: String {
     case positive
     case negative
     case neutral
-} 
+}
+

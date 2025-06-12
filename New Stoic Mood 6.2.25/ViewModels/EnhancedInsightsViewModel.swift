@@ -78,4 +78,5 @@ class EnhancedInsightsViewModel: ObservableObject {
     func exportInsights(format: ExportFormat) {
         // Implementation for exporting insights
     }
-} 
+}
+

@@ -32,4 +32,5 @@ struct MoodSelectionGrid: View {
         onMoodSelected: { _ in }
     )
     .environmentObject(ThemeManager())
-} 
+}
+

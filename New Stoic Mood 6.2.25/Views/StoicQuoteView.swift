@@ -28,4 +28,5 @@ struct StoicQuoteView: View {
 #Preview {
     StoicQuoteView()
         .environmentObject(ThemeManager())
-} 
+}
+

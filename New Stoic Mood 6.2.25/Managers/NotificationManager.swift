@@ -123,4 +123,5 @@ class NotificationManager: ObservableObject {
         removeDailyReminder()
         scheduleDailyReminder()
     }
-} 
+}
+

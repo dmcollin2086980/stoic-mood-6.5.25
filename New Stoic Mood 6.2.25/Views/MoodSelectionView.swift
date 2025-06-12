@@ -119,4 +119,5 @@ struct MoodSelectionView: View {
     MoodSelectionView(onMoodSelected: { _, _ in })
         .environmentObject(ThemeManager())
         .environmentObject(MoodViewModel())
-} 
+}
+

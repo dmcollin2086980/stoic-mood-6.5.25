@@ -27,4 +27,5 @@ struct SectionView: View {
         themeManager: ThemeManager()
     )
     .padding()
-} 
+}
+

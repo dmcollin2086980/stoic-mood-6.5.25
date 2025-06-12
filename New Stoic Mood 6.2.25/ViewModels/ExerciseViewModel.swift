@@ -102,4 +102,5 @@ class ExerciseViewModel: ObservableObject {
             userDefaults.set(encoded, forKey: exerciseHistoryKey)
         }
     }
-} 
+}
+

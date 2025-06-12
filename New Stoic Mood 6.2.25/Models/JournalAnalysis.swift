@@ -119,4 +119,5 @@ struct JournalAnalysis {
             .prefix(3)
             .map { $0.key }
     }
-} 
+}
+

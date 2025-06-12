@@ -53,4 +53,5 @@ struct ReflectionQuality {
     let length: Int
     let consistency: Int
     let feedback: String?
-} 
+}
+

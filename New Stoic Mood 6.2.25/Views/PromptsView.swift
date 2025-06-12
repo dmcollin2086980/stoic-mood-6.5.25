@@ -35,4 +35,5 @@ struct StoicPrompts {
         },
         themeManager: ThemeManager()
     )
-} 
+}
+

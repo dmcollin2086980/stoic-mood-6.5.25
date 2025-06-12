@@ -82,4 +82,5 @@ struct JournalEntry: Identifiable, Codable {
     var wordCount: Int {
         content.split(separator: " ").count
     }
-} 
+}
+

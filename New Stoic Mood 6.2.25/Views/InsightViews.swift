@@ -91,4 +91,5 @@ struct InsightTypePickerView: View {
             }
         }
     }
-} 
+}
+
